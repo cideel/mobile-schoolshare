@@ -3,6 +3,7 @@ import 'package:schoolshare/Config/color.dart';
 import 'package:schoolshare/Pages/login.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
+import 'package:schoolshare/Pages/Profile/profile.dart';
 import 'package:schoolshare/Pages/register.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: AppColor.componentColor),
         useMaterial3: true,
       ),
-      home: SplashScreen(),
+      home: Profile(),
     );
   }
 }

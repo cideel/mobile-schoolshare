@@ -23,182 +23,185 @@ class Login extends ConsumerWidget {
       child: ScreenUtilInit(
         designSize: const Size(375, 854),
         builder: (context, child) => Scaffold(
+          resizeToAvoidBottomInset: true,
           backgroundColor: AppColor.bgColor,
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Header(),
-              Padding(padding: EdgeInsets.symmetric(vertical: 5.h)),
-              
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(height: 50.h),
-
-                      // Email Input
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CustomTextField(
-                            controller: emailController,
-                            labelText: "Email",
-                            icon: Icons.email_rounded,
-                            obscureText: false,
-                          ),
-                          if (emailError != null)
-                            Padding(
-                              padding: EdgeInsets.only(top: 5.h),
-                              child: Text(
-                                emailError,
-                                style: TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 12.sp,
+          body: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Header(),
+                Padding(padding: EdgeInsets.symmetric(vertical: 5.h)),
+                
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(height: 50.h),
+            
+                        // Email Input
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomTextField(
+                              controller: emailController,
+                              labelText: "Email",
+                              icon: Icons.email_rounded,
+                              obscureText: false,
+                            ),
+                            if (emailError != null)
+                              Padding(
+                                padding: EdgeInsets.only(top: 5.h),
+                                child: Text(
+                                  emailError,
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12.sp,
+                                  ),
                                 ),
                               ),
-                            ),
-                        ],
-                      ),
-
-                      SizedBox(height: 40.h),
-
-                      // Password Input
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CustomTextField(
-                            controller: passwordController,
-                            labelText: "Password",
-                            icon: Icons.lock,
-                            obscureText: isPasswordVisible,
-                            suffixIcon: IconButton(
-                              icon: Icon(isPasswordVisible
-                                  ? Icons.visibility_off
-                                  : Icons.visibility),
-                              onPressed: () {
-                                ref
-                                    .read(passwordVisibilityProvider.notifier)
-                                    .state = !isPasswordVisible;
-                              },
-                            ),
-                          ),
-                          if (passwordError != null)
-                            Padding(
-                              padding: EdgeInsets.only(top: 5.h),
-                              child: Text(
-                                passwordError,
-                                style: TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 12.sp,
-                                ),
+                          ],
+                        ),
+            
+                        SizedBox(height: 40.h),
+            
+                        // Password Input
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomTextField(
+                              controller: passwordController,
+                              labelText: "Password",
+                              icon: Icons.lock,
+                              obscureText: isPasswordVisible,
+                              suffixIcon: IconButton(
+                                icon: Icon(isPasswordVisible
+                                    ? Icons.visibility_off
+                                    : Icons.visibility),
+                                onPressed: () {
+                                  ref
+                                      .read(passwordVisibilityProvider.notifier)
+                                      .state = !isPasswordVisible;
+                                },
                               ),
                             ),
-                        ],
-                      ),
-
-                      SizedBox(height: 15.h),
-
-                      // Forgot Password
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Lupa password?",
-                          style: TextStyle(
-                            fontFamily: 'Roboto',
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w200,
-                          ),
+                            if (passwordError != null)
+                              Padding(
+                                padding: EdgeInsets.only(top: 5.h),
+                                child: Text(
+                                  passwordError,
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12.sp,
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
-                      ),
-
-                      SizedBox(height: 25.h),
-
-                      // Login Button
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: Size(335.w, 55.h),
-                          backgroundColor: AppColor.componentColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.r),
-                          ),
-                        ),
-                        onPressed: () {
-                          bool hasError = false;
-
-                          // Email validation
-                          if (emailController.text.isEmpty) {
-                            ref.read(emailErrorProvider.notifier).state =
-                                "Email tidak boleh kosong";
-                            hasError = true;
-                          } else if (!RegExp(r"^[^@]+@[^@]+\.[^@]+")
-                              .hasMatch(emailController.text)) {
-                            ref.read(emailErrorProvider.notifier).state =
-                                "Format email tidak valid";
-                            hasError = true;
-                          } else {
-                            ref.read(emailErrorProvider.notifier).state = null;
-                          }
-
-                          // Password validation
-                          if (passwordController.text.isEmpty) {
-                            ref.read(passwordErrorProvider.notifier).state =
-                                "Password tidak boleh kosong";
-                            hasError = true;
-                          } else if (passwordController.text.length < 6) {
-                            ref.read(passwordErrorProvider.notifier).state =
-                                "Password minimal 6 karakter";
-                            hasError = true;
-                          } else {
-                            ref.read(passwordErrorProvider.notifier).state =
-                                null;
-                          }
-
-                          // Login Berhasil
-                          if (!hasError) {
-                    
-                            print("Login berhasil");
-                          }
-                        },
-                        child: Text(
-                          "Masuk",
-                          style: TextStyle(
-                            fontFamily: 'Roboto',
-                            color: Colors.white,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                      ),
-
-                      SizedBox(height: 20.h),
-
-                      // Sign Up
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Belum punya akun? ",
+            
+                        SizedBox(height: 15.h),
+            
+                        // Forgot Password
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Lupa password?",
                             style: TextStyle(
                               fontFamily: 'Roboto',
-                              fontWeight: FontWeight.w100,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w200,
                             ),
                           ),
-                          Text(
-                            "Daftar",
+                        ),
+            
+                        SizedBox(height: 25.h),
+            
+                        // Login Button
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: Size(335.w, 55.h),
+                            backgroundColor: AppColor.componentColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.r),
+                            ),
+                          ),
+                          onPressed: () {
+                            bool hasError = false;
+            
+                            // Email validation
+                            if (emailController.text.isEmpty) {
+                              ref.read(emailErrorProvider.notifier).state =
+                                  "Email tidak boleh kosong";
+                              hasError = true;
+                            } else if (!RegExp(r"^[^@]+@[^@]+\.[^@]+")
+                                .hasMatch(emailController.text)) {
+                              ref.read(emailErrorProvider.notifier).state =
+                                  "Format email tidak valid";
+                              hasError = true;
+                            } else {
+                              ref.read(emailErrorProvider.notifier).state = null;
+                            }
+            
+                            // Password validation
+                            if (passwordController.text.isEmpty) {
+                              ref.read(passwordErrorProvider.notifier).state =
+                                  "Password tidak boleh kosong";
+                              hasError = true;
+                            } else if (passwordController.text.length < 6) {
+                              ref.read(passwordErrorProvider.notifier).state =
+                                  "Password minimal 6 karakter";
+                              hasError = true;
+                            } else {
+                              ref.read(passwordErrorProvider.notifier).state =
+                                  null;
+                            }
+            
+                            // Login Berhasil
+                            if (!hasError) {
+                      
+                              print("Login berhasil");
+                            }
+                          },
+                          child: Text(
+                            "Masuk",
                             style: TextStyle(
                               fontFamily: 'Roboto',
-                              fontWeight: FontWeight.w600,
-                              color: AppColor.componentColor,
+                              color: Colors.white,
+                              fontWeight: FontWeight.normal,
                             ),
                           ),
-                        ],
-                      ),
-                    ],
+                        ),
+            
+                        SizedBox(height: 20.h),
+            
+                        // Sign Up
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Belum punya akun? ",
+                              style: TextStyle(
+                                fontFamily: 'Roboto',
+                                fontWeight: FontWeight.w100,
+                              ),
+                            ),
+                            Text(
+                              "Daftar",
+                              style: TextStyle(
+                                fontFamily: 'Roboto',
+                                fontWeight: FontWeight.w600,
+                                color: AppColor.componentColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
