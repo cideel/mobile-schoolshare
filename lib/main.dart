@@ -3,14 +3,14 @@ import 'package:schoolshare/Config/color.dart';
 import 'package:schoolshare/Pages/login.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
-import 'package:schoolshare/Pages/Profile/profile.dart';
 import 'package:schoolshare/Pages/register.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:schoolshare/Pages/splash_screen.dart';
+import 'package:schoolshare/Widgets/navbart.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized(); // Pastikan binding diinisialisasi terlebih dahulu
+  WidgetsFlutterBinding.ensureInitialized(); 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp, // Hanya potrait atas
   ]).then((_) {
@@ -30,8 +30,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: AppColor.componentColor),
         useMaterial3: true,
+        
       ),
-      home: Profile(),
+      home: NavBarScreen(),
     );
   }
 }
