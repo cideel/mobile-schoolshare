@@ -32,7 +32,7 @@ Widget build(BuildContext context, WidgetRef ref) {
             flexibleSpace: const FlexibleSpaceBar(
               background: Padding(
                 padding: EdgeInsets.only(top: 60),
-                child: ProfileHeader(), // header custom kamu
+                child: ProfileHeader(), 
               ),
               collapseMode: CollapseMode.parallax,
             ),
