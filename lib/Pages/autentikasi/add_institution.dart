@@ -62,11 +62,11 @@ class _RegisterInstitutionState extends State<RegisterInstitution> {
                   padding: EdgeInsets.symmetric(vertical: 14.h),
                 ),
                 onPressed: () {
-                  // Aksi simpan
-                  print("Institusi disubmit");
+                  
+                  print("cek button simpan institusi disubmit");
                 },
                 child: Text(
-                  'KIRIM PERMOHONAN',
+                  'SIMPAN',
                   style: TextStyle(color: Colors.white, fontSize: 14.sp, fontWeight: FontWeight.bold),
                 ),
               ),
