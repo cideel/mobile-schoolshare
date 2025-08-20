@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schoolshare/Config/color.dart';
 import 'package:schoolshare/Pages/search/search_page.dart';
-// import 'package:schoolshare/Pages/search_page.dart'; // ganti dengan halaman search kamu
 
 class HomeAppBar extends StatelessWidget {
   const HomeAppBar({super.key});
@@ -9,6 +8,7 @@ class HomeAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
+
     return SliverAppBar(
       pinned: true,
       backgroundColor: AppColor.componentColor,
@@ -16,12 +16,12 @@ class HomeAppBar extends StatelessWidget {
       flexibleSpace: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: mq.size.width * 0.03,
-            vertical: mq.size.height * 0.01,
+            horizontal: mq.size.width * 0.04,
+            vertical: mq.size.height * 0.015,
           ),
           child: Row(
             children: [
-              /// ✅ TextField-look-alike Button
+              /// Search Box
               Expanded(
                 child: GestureDetector(
                   onTap: () {
@@ -31,21 +31,31 @@ class HomeAppBar extends StatelessWidget {
                     );
                   },
                   child: Container(
-                    height: mq.size.height * 0.055,
+                    height: mq.size.height * 0.05,
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black,
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     alignment: Alignment.centerLeft,
                     child: Row(
                       children: const [
-                        Icon(Icons.search_outlined, color: Colors.grey),
+                        Icon(Icons.search_rounded, color: Colors.grey, size: 20),
                         SizedBox(width: 8),
                         Text(
-                          "Cari publikasi....",
-                          style: TextStyle(color: Colors.grey),
+                          "Cari publikasi...",
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                       ],
                     ),
@@ -53,13 +63,17 @@ class HomeAppBar extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(width: mq.size.width * 0.02),
+              SizedBox(width: mq.size.width * 0.025),
 
-              /// Bookmark
-              IconButton(
-                icon: const Icon(Icons.bookmark_border, color: Colors.white),
-                iconSize: 28,
-                onPressed: () => print("Bookmark diklik!"),
+              Container(
+                decoration: BoxDecoration(
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.bookmark_border_rounded),
+                  iconSize: 30,
+                  color: Colors.white,
+                  onPressed: () => print("Bookmark diklik!"),
+                ),
               ),
             ],
           ),
