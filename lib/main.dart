@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:schoolshare/Config/color.dart';
-import 'package:schoolshare/Pages/login.dart';
+import 'package:schoolshare/Pages/autentikasi/login.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
-import 'package:schoolshare/Pages/register.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:schoolshare/Pages/splash_screen.dart';
-import 'package:schoolshare/Widgets/navbart.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized(); 
@@ -28,11 +25,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
+        fontFamily: 'Roboto',
         colorScheme: ColorScheme.fromSeed(seedColor: AppColor.componentColor),
         useMaterial3: true,
         
       ),
-      home: NavBarScreen(),
+      home: Login(),
     );
   }
 }
