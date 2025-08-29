@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schoolshare/Config/color.dart';
+import 'package:schoolshare/Config/text_styles.dart';
 import 'package:schoolshare/Pages/search/search_page.dart';
 
 class HomeAppBar extends StatelessWidget {
@@ -32,13 +33,13 @@ class HomeAppBar extends StatelessWidget {
                   },
                   child: Container(
                     height: mq.size.height * 0.05,
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    padding: EdgeInsets.symmetric(horizontal: mq.size.width * 0.03),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black,
+                          color: Colors.black.withOpacity(0.1),
                           blurRadius: 6,
                           offset: const Offset(0, 2),
                         ),
@@ -46,14 +47,15 @@ class HomeAppBar extends StatelessWidget {
                     ),
                     alignment: Alignment.centerLeft,
                     child: Row(
-                      children: const [
-                        Icon(Icons.search_rounded, color: Colors.grey, size: 20),
-                        SizedBox(width: 8),
+                      children: [
+                        Icon(Icons.search_rounded, 
+                          color: Colors.grey, 
+                          size: mq.size.width * 0.05 // Responsive icon size
+                        ),
+                        SizedBox(width: mq.size.width * 0.02), // Responsive spacing
                         Text(
                           "Cari publikasi...",
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
+                          style: AppTextStyle.caption.copyWith(
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -70,7 +72,7 @@ class HomeAppBar extends StatelessWidget {
                 ),
                 child: IconButton(
                   icon: const Icon(Icons.bookmark_border_rounded),
-                  iconSize: 30,
+                  iconSize: mq.size.width * 0.075, // Responsive icon size
                   color: Colors.white,
                   onPressed: () => print("Bookmark diklik!"),
                 ),

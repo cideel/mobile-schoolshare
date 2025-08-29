@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:schoolshare/Config/color.dart';
-import 'package:schoolshare/Pages/autentikasi/login.dart';
+import 'package:schoolshare/Pages/auth/login.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized(); 

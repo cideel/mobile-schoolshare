@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:schoolshare/Config/text_styles.dart';
 
 class AuthorName extends StatelessWidget {
   final String img;
@@ -9,16 +10,17 @@ class AuthorName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context);
     return Row(
       children: [
         CircleAvatar(
-          radius: 12,
+          radius: mq.size.width * 0.03, // Responsive avatar size
           backgroundImage: AssetImage(img),
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: mq.size.width * 0.02), // Responsive spacing
         Text(
           name,
-          style: TextStyle(fontSize: 14.sp),
+          style: AppTextStyle.authorName.copyWith(fontSize: 14.sp),
         )
       ],
     );

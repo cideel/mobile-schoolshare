@@ -2,10 +2,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/Config/color.dart';
-import 'package:schoolshare/Pages/autentikasi/add_institution.dart';
-import 'package:schoolshare/Pages/autentikasi/widgets/custom_dropdown.dart' as dropdown;
-import 'package:schoolshare/Pages/autentikasi/widgets/custom_search_institution.dart';
-import 'package:schoolshare/Pages/autentikasi/widgets/custom_text_field.dart' as custom;
+import 'package:schoolshare/Pages/auth/add_institution.dart';
+import 'package:schoolshare/Pages/auth/widgets/custom_dropdown.dart' as dropdown;
+import 'package:schoolshare/Pages/auth/widgets/custom_search_institution.dart';
+import 'package:schoolshare/Pages/auth/widgets/custom_text_field.dart' as custom;
 import 'package:schoolshare/Widgets/navbart.dart';
 
 class Register extends StatefulWidget {

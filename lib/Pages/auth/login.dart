@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:schoolshare/Config/color.dart';
-import 'package:schoolshare/Pages/autentikasi/register.dart';
-import 'package:schoolshare/Pages/autentikasi/widgets/custom_text_field.dart' as custom;
+import '../../Config/color.dart';
+import '../../Config/text_styles.dart';
+import 'register.dart';
+import 'widgets/custom_text_field.dart' as custom;
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -37,7 +38,10 @@ class _LoginState extends State<Login> {
             Center(
               child: Text(
                 "SchoolShare",
-                style: TextStyle(fontFamily:'Shipori',fontSize: 40.sp, fontWeight: FontWeight.bold),
+                style: AppTextStyle.titleLarge.copyWith(
+                  fontFamily: 'Shipori',
+                  fontSize: 40.sp,
+                ),
               ),
             ),
             SizedBox(height: mq.size.height * 0.01),
@@ -45,7 +49,9 @@ class _LoginState extends State<Login> {
               child: Text(
                 textAlign: TextAlign.center,
                 "Menghubungkan pengetahuan tanpa batas",
-                style: TextStyle(fontSize: 13.sp,fontWeight: FontWeight.w200),
+                style: AppTextStyle.subtitle.copyWith(
+                  fontWeight: FontWeight.w300,
+                ),
               ),
             ),
              SizedBox(height: mq.size.height * 0.03),
@@ -66,7 +72,9 @@ class _LoginState extends State<Login> {
                 },
                 child: Text(
                   'Lupa kata sandi?',
-                  style: TextStyle(fontSize: 12.sp, color: Colors.blue),
+                  style: AppTextStyle.caption.copyWith(
+                    color: Colors.blue,
+                  ),
                 ),
               ),
             ),
@@ -87,7 +95,10 @@ class _LoginState extends State<Login> {
                 },
                 child: Text(
                   'MASUK',
-                  style: TextStyle(color: Colors.white, fontSize: 14.sp, fontWeight: FontWeight.bold),
+                  style: AppTextStyle.subtitle.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -96,14 +107,17 @@ class _LoginState extends State<Login> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Belum punya akun? ", style: TextStyle(fontSize: 12.sp)),
+                Text("Belum punya akun? ", style: AppTextStyle.caption),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => const Register(),));
                   },
                   child: Text(
                     "Daftar",
-                    style: TextStyle(fontSize: 12.sp, color: Colors.blue, fontWeight: FontWeight.bold),
+                    style: AppTextStyle.caption.copyWith(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],

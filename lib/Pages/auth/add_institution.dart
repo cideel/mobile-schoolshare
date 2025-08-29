@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/Config/color.dart';
-import 'package:schoolshare/Pages/autentikasi/widgets/custom_dropdown.dart' as custom;
-import 'package:schoolshare/Pages/autentikasi/widgets/custom_text_field.dart' as dropdown;
+import 'package:schoolshare/Pages/auth/widgets/custom_dropdown.dart' as custom;
+import 'package:schoolshare/Pages/auth/widgets/custom_text_field.dart' as dropdown;
 
 class RegisterInstitution extends StatefulWidget {
   const RegisterInstitution({super.key});

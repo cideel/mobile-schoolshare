@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/Config/color.dart';
+import 'package:schoolshare/Config/text_styles.dart';
 import 'author_name.dart';
 
 class PublicationItem extends StatelessWidget {
@@ -22,20 +23,20 @@ class PublicationItem extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: mq.size.width * 0.05),
               child: Row(
                 children: [
-                  const CircleAvatar(
-                    radius: 25,
+                  CircleAvatar(
+                    radius: mq.size.width * 0.065, // Responsive avatar size
                     backgroundImage: AssetImage("assets/images/example-profile.jpg"),
                   ),
-                  const SizedBox(width: 10),
+                  SizedBox(width: mq.size.width * 0.025), // Responsive spacing
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text("John Snow",
-                            style: TextStyle(
-                                fontSize: 15.sp, fontWeight: FontWeight.bold)),
+                            style: AppTextStyle.cardTitle.copyWith(
+                                fontSize: 15.sp)),
                         Text("SMKN 31 Jakarta",
-                            style: TextStyle(fontSize: 12.sp)),
+                            style: AppTextStyle.caption.copyWith(fontSize: 12.sp)),
                       ],
                     ),
                   ),
@@ -52,40 +53,43 @@ class PublicationItem extends StatelessWidget {
                   side: const BorderSide(color: Colors.grey, width: 0.3),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: EdgeInsets.all(mq.size.width * 0.03), // Responsive padding
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Proximate Analysis of Merang Mushrooms (Volvariella volvacea)...",
-                        style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+                        "Proximate Analysis of Merang Mushrooms (Volvariella volvacea) Cultivated on Corncob and Rice Bran Media",
+                        style: AppTextStyle.titleLarge.copyWith(fontSize: 18.sp),
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 6),
+                      SizedBox(height: mq.size.height * 0.008),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: mq.size.width * 0.015, 
+                          vertical: mq.size.height * 0.004
+                        ),
                         color: AppColor.componentColor,
                         child: const Text(
                           "Publikasi",
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
-                      const SizedBox(height: 6),
-                      Text("12 Agustus 2023", style: TextStyle(fontSize: 12.sp)),
-                      const SizedBox(height: 10),
+                      SizedBox(height: mq.size.height * 0.008),
+                      Text("12 Agustus 2023", style: AppTextStyle.dateText),
+                      SizedBox(height: mq.size.height * 0.012),
                       const AuthorName(
                           img: 'assets/images/example-profile.jpg', name: "John Snow"),
-                      const SizedBox(height: 5),
+                      SizedBox(height: mq.size.height * 0.006),
                       const AuthorName(
                           img: 'assets/images/example-profile-2.jpg',
                           name: "Ratandi Ahmad Fauzan"),
-                      const SizedBox(height: 10),
+                      SizedBox(height: mq.size.height * 0.012),
                       Row(
                         children: [
-                          Text("66 Dibaca", style: TextStyle(fontSize: 13.sp)),
+                          Text("66 Dibaca", style: AppTextStyle.readCount),
                           const Text("  •  "),
-                          Text("5 Rekomendasi", style: TextStyle(fontSize: 13.sp)),
+                          Text("5 Rekomendasi", style: AppTextStyle.readCount),
                         ],
                       ),
                     ],
@@ -122,11 +126,12 @@ class ActionIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context);
     return Row(
       children: [
-        Icon(icon),
-        const SizedBox(width: 4),
-        Text(label, style: TextStyle(fontSize: 12.sp)),
+        Icon(icon, size: mq.size.width * 0.05), // Responsive icon size
+        SizedBox(width: mq.size.width * 0.01), // Responsive spacing
+        Text(label, style: AppTextStyle.caption),
       ],
     );
   }

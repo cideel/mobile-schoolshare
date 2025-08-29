@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/Config/color.dart';
+import 'package:schoolshare/Config/text_styles.dart';
 import 'package:schoolshare/Pages/home/widgets/author_name.dart'; // gunakan ulang komponen AuthorName
 
 class DetailInfoCard extends StatelessWidget {
@@ -21,37 +22,28 @@ class DetailInfoCard extends StatelessWidget {
               Row(
                 children: [
                   _label("Publikasi", true),
-                  const SizedBox(width: 8),
+                  SizedBox(width: mq.size.width * 0.02), // Responsive spacing
                   _label("Dokumen tersedia", false),
                 ],
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: mq.size.height * 0.012), // Responsive spacing
               Text(
-                "Proximate Analysis of Merang Mushrooms...",
-                style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+                "Proximate Analysis of Merang Mushrooms (Volvariella volvacea) Cultivated on Corncob and Rice Bran Media",
+                style: AppTextStyle.titleLarge.copyWith(fontSize: 18.sp),
               ),
-              const SizedBox(height: 5),
-              Text("12 Agustus 2023", style: TextStyle(fontSize: 12.sp)),
-              const SizedBox(height: 10),
+              SizedBox(height: mq.size.height * 0.006), // Responsive spacing
+              Text("12 Agustus 2023", style: AppTextStyle.dateText),
+              SizedBox(height: mq.size.height * 0.012), // Responsive spacing
               const AuthorName(
                 img: 'assets/images/example-profile.jpg',
                 name: "John Snow",
               ),
-              SizedBox(height: 5),
+              SizedBox(height: mq.size.height * 0.006), // Responsive spacing
               const AuthorName(
                 img: 'assets/images/example-profile-2.jpg',
                 name: "Ratandi Ahmad Fauzan",
               ),
-              const Divider(height: 30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _action(Icons.bookmark_outline, "Simpan"),
-                  _action(Icons.thumb_up_outlined, "Rekomendasi"),
-                  _action(Icons.share_outlined, "Bagikan"),
-                ],
-              ),
-              const SizedBox(height: 10),
+              Divider(height: mq.size.height * 0.036), // Responsive spacing
               Row(
                 children: [
                   Expanded(
@@ -61,10 +53,10 @@ class DetailInfoCard extends StatelessWidget {
                         minimumSize: Size(mq.size.width * 0.4, 45),
                       ),
                       onPressed: () {},
-                      child: const Text("Unduh dokumen", style: TextStyle(color: Colors.white)),
+                      child: Text("Unduh dokumen", style: AppTextStyle.badge),
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  SizedBox(width: mq.size.width * 0.025), // Responsive spacing
                   Expanded(
                     child: OutlinedButton(
                       style: OutlinedButton.styleFrom(
@@ -72,9 +64,20 @@ class DetailInfoCard extends StatelessWidget {
                         minimumSize: Size(mq.size.width * 0.4, 45),
                       ),
                       onPressed: () {},
-                      child: Text("Baca dokumen", style: TextStyle(color: AppColor.componentColor)),
+                      child: Text("Baca dokumen", style: AppTextStyle.caption.copyWith(
+                        color: AppColor.componentColor,
+                      )),
                     ),
                   ),
+                ],
+              ),
+              SizedBox(height: mq.size.height * 0.012), // Responsive spacing
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _action(Icons.bookmark_outline, "Simpan"),
+                  _action(Icons.thumb_up_outlined, "Rekomendasi"),
+                  _action(Icons.share_outlined, "Bagikan"),
                 ],
               ),
             ],
@@ -93,9 +96,8 @@ class DetailInfoCard extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: TextStyle(
+        style: AppTextStyle.caption.copyWith(
           color: filled ? Colors.white : AppColor.componentColor,
-          fontSize: 12.sp,
         ),
       ),
     );
@@ -104,9 +106,9 @@ class DetailInfoCard extends StatelessWidget {
   Widget _action(IconData icon, String label) {
     return Row(
       children: [
-        Icon(icon),
+        Icon(icon, size: 20), // Fixed icon size for now
         const SizedBox(width: 4),
-        Text(label, style: TextStyle(fontSize: 12.sp)),
+        Text(label, style: AppTextStyle.caption),
       ],
     );
   }

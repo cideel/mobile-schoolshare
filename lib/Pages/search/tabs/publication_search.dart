@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/Config/color.dart';
+import 'package:schoolshare/Config/text_styles.dart';
 
 class PublicationSearchResult extends StatelessWidget {
   const PublicationSearchResult({super.key});
@@ -88,7 +89,7 @@ class PublicationSearchResult extends StatelessWidget {
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
                 pub['title'] as String,
-                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+                style: AppTextStyle.cardTitle.copyWith(fontSize: 16.sp),
               ),
               SizedBox(height: mq.size.height * 0.008),
           
@@ -105,7 +106,7 @@ class PublicationSearchResult extends StatelessWidget {
               // Tanggal
               Text(
                 pub['date'] as String,
-                style: TextStyle(fontSize: 13.sp, color: Colors.grey[700]),
+                style: AppTextStyle.dateText.copyWith(fontSize: 13.sp),
               ),
               SizedBox(height: mq.size.height * 0.008),
           
@@ -122,7 +123,7 @@ class PublicationSearchResult extends StatelessWidget {
               // Reads
               Text(
                 "${pub['reads']} Dibaca",
-                style: TextStyle(fontSize: 13.sp, color: Colors.grey[700]),
+                style: AppTextStyle.readCount.copyWith(fontSize: 13.sp),
               ),
             ],
           ),
@@ -141,7 +142,7 @@ class PublicationSearchResult extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: TextStyle(fontSize: 12.sp, color: Colors.white,fontWeight: FontWeight.bold),
+        style: AppTextStyle.badge.copyWith(fontSize: 12.sp),
       ),
     );
   }
@@ -161,7 +162,7 @@ class PublicationSearchResult extends StatelessWidget {
         SizedBox(width: mq.size.width * 0.015),
         Text(
           author['name'],
-          style: TextStyle(fontSize: 13.sp),
+          style: AppTextStyle.authorName.copyWith(fontSize: 13.sp),
         )
       ],
     );

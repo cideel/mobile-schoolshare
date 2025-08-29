@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:schoolshare/Config/text_styles.dart';
 
 class PeopleSearchResult extends StatelessWidget {
   const PeopleSearchResult({super.key});
@@ -104,13 +105,12 @@ class PeopleSearchResult extends StatelessWidget {
             ),
             title: Text(
               person['name'] ?? '',
-              style: TextStyle(
+              style: AppTextStyle.cardTitle.copyWith(
                 fontSize: 16.sp,
-                fontWeight: FontWeight.w500,
               ),
             ),
             subtitle: Text(person['school']??'',
-            style: TextStyle(fontSize: 14.sp,fontWeight: FontWeight.w300),),
+            style: AppTextStyle.caption.copyWith(fontSize: 14.sp)),
             onTap: () {
               debugPrint("Klik: ${person['name']}");
             },

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:schoolshare/Config/color.dart';
-import 'package:schoolshare/Pages/Profile/profile/profile.dart';
-import 'package:schoolshare/Pages/detail%20people/detail_profile.dart';
+import 'package:schoolshare/Pages/Profile/profile.dart';
 import 'package:schoolshare/Pages/home/home_page.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/Pages/notif.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 

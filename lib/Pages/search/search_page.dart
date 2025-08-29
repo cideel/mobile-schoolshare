@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:schoolshare/Config/color.dart';
-import 'package:schoolshare/Pages/search/widgets/people_search.dart';
-import 'package:schoolshare/Pages/search/widgets/publication_search.dart';
+import 'package:schoolshare/Config/text_styles.dart';
+import 'package:schoolshare/Pages/search/tabs/people_search.dart';
+import 'package:schoolshare/Pages/search/tabs/publication_search.dart';
+import 'package:schoolshare/Pages/search/tabs/discussion_search.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -16,7 +18,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this); // Updated to 3 tabs
     super.initState();
   }
 
@@ -50,9 +52,11 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
               indicatorColor: AppColor.componentColor,
               labelColor: Colors.black,
               unselectedLabelColor: Colors.grey,
+              labelStyle: AppTextStyle.tabLabel,
               tabs: const [
                 Tab(text: "Orang"),
                 Tab(text: "Publikasi"),
+                Tab(text: "Diskusi"),
               ],
             ),
           ),
@@ -62,6 +66,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
               children: const [
                 PeopleSearchResult(),
                 PublicationSearchResult(),
+                DiscussionSearchResult(),
               ],
             ),
           ),
@@ -72,34 +77,66 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
 
   Widget _buildSearchBar(MediaQueryData mq) {
     return Container(
-      height: mq.size.height * 0.055,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      height: mq.size.height * 0.048,
+      margin: EdgeInsets.only(right: mq.size.width * 0.04),
+      padding: EdgeInsets.symmetric(horizontal: mq.size.width * 0.04),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: Colors.grey.shade300),
+        color: Colors.white, // Solid white background
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      alignment: Alignment.centerLeft,
       child: Row(
         children: [
-          const Icon(Icons.search_outlined, color: Colors.grey),
-          const SizedBox(width: 8),
+          Icon(
+            Icons.search_rounded,
+            color: Colors.grey[600],
+            size: mq.size.width * 0.045,
+          ),
+          SizedBox(width: mq.size.width * 0.025),
           Expanded(
             child: TextField(
               controller: _searchController,
               onChanged: (value) {
-                // TODO: trigger search logic
+                setState(() {});
               },
-              decoration: const InputDecoration(
+              style: AppTextStyle.bodyText.copyWith(
+                fontSize: 14,
+                color: Colors.grey[700],
+              ),
+              decoration: InputDecoration(
                 hintText: "Cari sesuatu...",
-                hintStyle: TextStyle(color: Colors.grey),
+                hintStyle: AppTextStyle.caption.copyWith(
+                  color: Colors.grey[500],
+                  fontSize: 13,
+                  fontWeight: FontWeight.w400,
+                ),
                 border: InputBorder.none,
                 isDense: true,
+                contentPadding: EdgeInsets.symmetric(vertical: mq.size.height * 0.012),
               ),
             ),
           ),
+          if (_searchController.text.isNotEmpty)
+            GestureDetector(
+              onTap: () {
+                _searchController.clear();
+                setState(() {});
+              },
+              child: Icon(
+                Icons.clear_rounded,
+                color: Colors.grey[500],
+                size: mq.size.width * 0.04,
+              ),
+            ),
         ],
       ),
     );
   }
+
 }
