@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:schoolshare/Config/color.dart';
-import 'package:schoolshare/Pages/auth/login.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schoolshare/core/constants/color.dart';
+import 'package:get/get.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'app/routes/app_pages.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized(); 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp, // Hanya potrait atas
   ]).then((_) {
-    runApp(ProviderScope(child: ScreenUtilInit(
+    runApp(ScreenUtilInit(
       designSize: Size(375, 854),
         builder: (context, child) => MyApp(),
-    )));
+    ));
   });
 }
 
@@ -22,14 +22,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
+      title: 'SchoolShare',
       theme: ThemeData(
         fontFamily: 'Roboto',
         colorScheme: ColorScheme.fromSeed(seedColor: AppColor.componentColor),
         useMaterial3: true,
-        
       ),
-      home: Login(),
+      initialRoute: AppPages.INITIAL,
+      getPages: AppPages.routes,
+      debugShowCheckedModeBanner: false,
     );
   }
 }
