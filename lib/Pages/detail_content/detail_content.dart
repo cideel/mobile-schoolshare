@@ -5,7 +5,6 @@ import 'widgets/detail_info_card.dart';
 import 'widgets/detail_stats_card.dart';
 import 'widgets/detail_header.dart';
 
-
 class DetailContent extends ConsumerWidget {
   const DetailContent({super.key});
 

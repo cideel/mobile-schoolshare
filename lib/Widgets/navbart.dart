@@ -4,35 +4,47 @@ import 'package:schoolshare/Pages/Profile/profile.dart';
 import 'package:schoolshare/Pages/home/home_page.dart';
 import 'package:schoolshare/Pages/notif.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
-
+import 'package:get/get.dart'; // Tambahkan impor GetX
+import 'package:schoolshare/Services/home_services.dart'; // Impor HomeServices
+import 'package:schoolshare/Controller/home/home_controller.dart';
+import 'package:schoolshare/Services/realtime_services.dart'; // Impor HomeController
 
 class NavBarScreen extends StatelessWidget {
-  final PersistentTabController _controller = PersistentTabController(initialIndex: 0);
+  final PersistentTabController _controller =
+      PersistentTabController(initialIndex: 0);
+
+  // Daftarkan semua dependensi di dalam konstruktor.
+  // Ini memastikan mereka siap saat NavBarScreen pertama kali dibuat.
+  NavBarScreen({super.key}) {
+    Get.put(HomeServices());
+    Get.put(RealtimeService());
+    Get.put(HomeController());
+  }
 
   List<Widget> _buildScreens() {
     return [
-      Home(),
-      Notif(),
-      Profile(),
+      const Home(),
+      const Notif(),
+      const Profile(),
     ];
   }
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.home_outlined),
+        icon: const Icon(Icons.home_outlined),
         title: "Beranda",
         activeColorPrimary: AppColor.componentColor,
         inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.notifications_outlined),
+        icon: const Icon(Icons.notifications_outlined),
         title: "Notifikasi",
         activeColorPrimary: AppColor.componentColor,
         inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.person_outline_sharp),
+        icon: const Icon(Icons.person_outline_sharp),
         title: "Profil",
         activeColorPrimary: AppColor.componentColor,
         inactiveColorPrimary: Colors.grey,

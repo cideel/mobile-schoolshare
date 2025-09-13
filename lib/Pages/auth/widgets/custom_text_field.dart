@@ -1,5 +1,3 @@
-// custom_widgets.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -8,6 +6,7 @@ class CustomTextField extends StatelessWidget {
   final bool isPassword;
   final bool obscureText;
   final VoidCallback? toggleObscure;
+  final TextEditingController? controller; // Properti baru
 
   const CustomTextField({
     super.key,
@@ -15,6 +14,7 @@ class CustomTextField extends StatelessWidget {
     this.isPassword = false,
     this.obscureText = false,
     this.toggleObscure,
+    this.controller, // Properti baru di constructor
   });
 
   @override
@@ -29,6 +29,7 @@ class CustomTextField extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade300),
       ),
       child: TextField(
+        controller: controller, // Menghubungkan controller ke TextField
         obscureText: isPassword ? obscureText : false,
         decoration: InputDecoration(
           hintText: hintText,

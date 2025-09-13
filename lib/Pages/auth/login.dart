@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../Config/color.dart';
-import '../../Config/text_styles.dart';
-import 'register.dart';
-import 'widgets/custom_text_field.dart' as custom;
+import 'package:schoolshare/Config/color.dart';
+import 'package:schoolshare/Config/text_styles.dart';
+import 'package:schoolshare/Pages/auth/register.dart';
+import 'package:schoolshare/Pages/auth/widgets/custom_text_field.dart'
+    as custom;
+import 'package:schoolshare/Services/auth_services.dart';
+import 'package:schoolshare/Widgets/navbart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -14,6 +18,51 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   bool _obscurePassword = true;
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleLogin() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Email dan kata sandi tidak boleh kosong.')),
+      );
+      return;
+    }
+
+    try {
+      final response = await AuthService().login(email, password);
+
+      if (response['success'] == true) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('authToken', response['token']);
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => NavBarScreen()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response['message'])),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Terjadi kesalahan: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +79,9 @@ class _LoginState extends State<Login> {
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
         child: Column(
-          
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: mq.size.height * 0.12),
-
             Center(
               child: Text(
                 "SchoolShare",
@@ -54,22 +101,23 @@ class _LoginState extends State<Login> {
                 ),
               ),
             ),
-             SizedBox(height: mq.size.height * 0.03),
-      
-            const custom.CustomTextField(hintText: 'Email'),
-      
+            SizedBox(height: mq.size.height * 0.03),
             custom.CustomTextField(
+              controller: _emailController,
+              hintText: 'Email',
+            ),
+            custom.CustomTextField(
+              controller: _passwordController,
               hintText: 'Kata Sandi',
               isPassword: true,
               obscureText: _obscurePassword,
-              toggleObscure: () => setState(() => _obscurePassword = !_obscurePassword),
+              toggleObscure: () =>
+                  setState(() => _obscurePassword = !_obscurePassword),
             ),
-      
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: () {
-                },
+                onPressed: () {},
                 child: Text(
                   'Lupa kata sandi?',
                   style: AppTextStyle.caption.copyWith(
@@ -78,7 +126,6 @@ class _LoginState extends State<Login> {
                 ),
               ),
             ),
-      
             SizedBox(height: mq.size.height * 0.01),
             SizedBox(
               width: double.infinity,
@@ -88,11 +135,10 @@ class _LoginState extends State<Login> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(mq.size.width * 0.02),
                   ),
-                  padding: EdgeInsets.symmetric(vertical: mq.size.height * 0.018),
+                  padding:
+                      EdgeInsets.symmetric(vertical: mq.size.height * 0.018),
                 ),
-                onPressed: () {
-                  print("Login ditekan");
-                },
+                onPressed: _handleLogin,
                 child: Text(
                   'MASUK',
                   style: AppTextStyle.subtitle.copyWith(
@@ -102,7 +148,6 @@ class _LoginState extends State<Login> {
                 ),
               ),
             ),
-      
             SizedBox(height: mq.size.height * 0.03),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -110,7 +155,10 @@ class _LoginState extends State<Login> {
                 Text("Belum punya akun? ", style: AppTextStyle.caption),
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const Register(),));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Register()),
+                    );
                   },
                   child: Text(
                     "Daftar",

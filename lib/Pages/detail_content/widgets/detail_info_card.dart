@@ -34,15 +34,15 @@ class DetailInfoCard extends StatelessWidget {
               SizedBox(height: mq.size.height * 0.006), // Responsive spacing
               Text("12 Agustus 2023", style: AppTextStyle.dateText),
               SizedBox(height: mq.size.height * 0.012), // Responsive spacing
-              const AuthorName(
-                img: 'assets/images/example-profile.jpg',
-                name: "John Snow",
-              ),
-              SizedBox(height: mq.size.height * 0.006), // Responsive spacing
-              const AuthorName(
-                img: 'assets/images/example-profile-2.jpg',
-                name: "Ratandi Ahmad Fauzan",
-              ),
+              // const AuthorName(
+              //   img: 'assets/images/example-profile.jpg',
+              //   name: "John Snow",
+              // ),
+              // SizedBox(height: mq.size.height * 0.006), // Responsive spacing
+              // const AuthorName(
+              //   img: 'assets/images/example-profile-2.jpg',
+              //   name: "Ratandi Ahmad Fauzan",
+              // ),
               Divider(height: mq.size.height * 0.036), // Responsive spacing
               Row(
                 children: [
@@ -64,9 +64,10 @@ class DetailInfoCard extends StatelessWidget {
                         minimumSize: Size(mq.size.width * 0.4, 45),
                       ),
                       onPressed: () {},
-                      child: Text("Baca dokumen", style: AppTextStyle.caption.copyWith(
-                        color: AppColor.componentColor,
-                      )),
+                      child: Text("Baca dokumen",
+                          style: AppTextStyle.caption.copyWith(
+                            color: AppColor.componentColor,
+                          )),
                     ),
                   ),
                 ],

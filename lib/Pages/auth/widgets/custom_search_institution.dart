@@ -1,59 +1,75 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:schoolshare/Services/institution_service.dart';
 
 class CustomInstitutionSearchField extends StatefulWidget {
-  const CustomInstitutionSearchField({super.key});
+  final Function(int id, String name) onInstitutionSelected;
+
+  const CustomInstitutionSearchField({
+    super.key,
+    required this.onInstitutionSelected,
+  });
 
   @override
-  State<CustomInstitutionSearchField> createState() => _CustomInstitutionSearchFieldState();
+  State<CustomInstitutionSearchField> createState() =>
+      _CustomInstitutionSearchFieldState();
 }
 
-class _CustomInstitutionSearchFieldState extends State<CustomInstitutionSearchField> {
+class _CustomInstitutionSearchFieldState
+    extends State<CustomInstitutionSearchField> {
   final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
 
-  final List<String> allInstitutions = [
-    'SDN Solo 1',
-    'SDN Solo Barat',
-    'SMP Negeri 2 Solo',
-    'SMA Nasional Surakarta',
-    'Universitas Sebelas Maret',
-    'Universitas Muhammadiyah Surakarta',
-    'SDN 1 Jepang Barat',
-    'SDN 2 Rusia Tengah'
-  ];
-
-  List<String> filteredInstitutions = [];
+  List<dynamic> allInstitutions = [];
+  List<dynamic> filteredInstitutions = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _fetchInstitutions();
     _controller.addListener(_onSearchChanged);
+  }
+
+  Future<void> _fetchInstitutions() async {
+    try {
+      final institutions = await InstitutionService().getInstitutions();
+      setState(() {
+        allInstitutions = institutions;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      // Menampilkan error di konsol untuk debugging
+      debugPrint('ERROR: Gagal mengambil data institusi: $e');
+    }
   }
 
   void _onSearchChanged() {
     final query = _controller.text.toLowerCase();
-    if (query.length < 2) {
-      setState(() => filteredInstitutions.clear());
-      return;
-    }
-
     setState(() {
-      filteredInstitutions = allInstitutions
-          .where((inst) => inst.toLowerCase().contains(query))
-          .toList();
+      if (query.isEmpty) {
+        filteredInstitutions = [];
+      } else {
+        filteredInstitutions = allInstitutions
+            .where((inst) => inst['name'].toLowerCase().contains(query))
+            .toList();
+      }
     });
   }
 
-  void _selectInstitution(String name) {
-    _controller.text = name;
+  void _selectInstitution(dynamic institution) {
+    _controller.text = institution['name'];
+    widget.onInstitutionSelected(institution['id'], institution['name']);
     FocusScope.of(context).unfocus();
-    setState(() => filteredInstitutions.clear());
+    setState(() => filteredInstitutions = []);
   }
 
   @override
   void dispose() {
     _controller.removeListener(_onSearchChanged);
     _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -64,7 +80,9 @@ class _CustomInstitutionSearchFieldState extends State<CustomInstitutionSearchFi
     return Column(
       children: [
         _buildInputField(mq),
-        if (filteredInstitutions.isNotEmpty)
+        if (_isLoading)
+          const Center(child: CircularProgressIndicator())
+        else if (filteredInstitutions.isNotEmpty)
           Container(
             margin: EdgeInsets.only(bottom: mq.size.height * 0.02),
             decoration: BoxDecoration(
@@ -81,7 +99,7 @@ class _CustomInstitutionSearchFieldState extends State<CustomInstitutionSearchFi
               itemBuilder: (context, index) {
                 final inst = filteredInstitutions[index];
                 return ListTile(
-                  title: Text(inst, style: TextStyle(fontSize: 13.sp)),
+                  title: Text(inst['name'], style: TextStyle(fontSize: 13.sp)),
                   onTap: () => _selectInstitution(inst),
                 );
               },
@@ -101,6 +119,7 @@ class _CustomInstitutionSearchFieldState extends State<CustomInstitutionSearchFi
       ),
       child: TextField(
         controller: _controller,
+        focusNode: _focusNode,
         decoration: InputDecoration(
           hintText: 'Nama Institusi',
           hintStyle: TextStyle(fontSize: 13.sp),

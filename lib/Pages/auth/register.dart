@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/Config/color.dart';
 import 'package:schoolshare/Pages/auth/add_institution.dart';
-import 'package:schoolshare/Pages/auth/widgets/custom_dropdown.dart' as dropdown;
+import 'package:schoolshare/Pages/auth/widgets/custom_dropdown.dart'
+    as dropdown;
 import 'package:schoolshare/Pages/auth/widgets/custom_search_institution.dart';
-import 'package:schoolshare/Pages/auth/widgets/custom_text_field.dart' as custom;
+import 'package:schoolshare/Pages/auth/widgets/custom_text_field.dart'
+    as custom;
+import 'package:schoolshare/Services/auth_services.dart';
 import 'package:schoolshare/Widgets/navbart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -19,9 +23,105 @@ class _RegisterState extends State<Register> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _agree = false;
-  String? _selectedCategory;
 
-  final List<String> _categories = ['SD/MI', 'SMP', 'SMA/SMK/MA', 'Perguruan Tinggi'];
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+  final TextEditingController _positionController =
+      TextEditingController(); // Menambahkan controller untuk posisi
+
+  String? _selectedCategory;
+  int? _selectedInstitutionId;
+  String? _selectedInstitutionName;
+
+  final List<String> _categories = [
+    'SD/MI',
+    'SMP',
+    'SMA/SMK/MA',
+    'Perguruan Tinggi'
+  ];
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    _positionController.dispose(); // Membuang controller posisi
+    super.dispose();
+  }
+
+  Future<void> _handleRegister() async {
+    if (_passwordController.text != _confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Konfirmasi kata sandi tidak cocok.')),
+      );
+      return;
+    }
+
+    if (!_agree) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Anda harus menyetujui syarat dan ketentuan.')),
+      );
+      return;
+    }
+
+    if (_selectedInstitutionId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Anda harus memilih institusi.')),
+      );
+      return;
+    }
+
+    if (_positionController.text.trim().isEmpty) {
+      // Menambahkan validasi untuk posisi
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Anda harus memasukkan posisi.')),
+      );
+      return;
+    }
+
+    try {
+      final response = await AuthService().register(
+        name: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        phone: _phoneController.text.trim(),
+        institusiId: _selectedInstitutionId!,
+        position: _positionController.text.trim(), // Mengirimkan posisi
+        password: _passwordController.text.trim(),
+        passwordConfirmation: _confirmPasswordController.text.trim(),
+      );
+
+      if (response['success'] == true) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('authToken', response['token']);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Registrasi berhasil!')),
+        );
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NavBarScreen(),
+            ));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content:
+                  Text(response['message'] ?? 'Registrasi gagal. Coba lagi.')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Terjadi kesalahan: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,19 +148,37 @@ class _RegisterState extends State<Register> {
               ),
             ),
             SizedBox(height: mq.size.height * 0.03),
-
-            const custom.CustomTextField(hintText: 'Nama Lengkap'),
-            const custom.CustomTextField(hintText: 'Email'),
-
+            custom.CustomTextField(
+              controller: _nameController,
+              hintText: 'Nama Lengkap',
+            ),
+            custom.CustomTextField(
+              controller: _emailController,
+              hintText: 'Email',
+            ),
+            custom.CustomTextField(
+              controller: _phoneController,
+              hintText: 'Nomor Telepon',
+            ),
             dropdown.CustomDropdown(
               hint: 'Pilih Kategori',
               items: _categories,
               value: _selectedCategory,
               onChanged: (val) => setState(() => _selectedCategory = val),
             ),
-
-            const CustomInstitutionSearchField(),
-
+            CustomInstitutionSearchField(
+              onInstitutionSelected: (id, name) {
+                setState(() {
+                  _selectedInstitutionId = id;
+                  _selectedInstitutionName = name;
+                });
+              },
+            ),
+            // Inputan baru untuk posisi
+            custom.CustomTextField(
+              controller: _positionController,
+              hintText: 'Posisi Anda',
+            ),
             Align(
               alignment: Alignment.centerRight,
               child: Padding(
@@ -84,8 +202,12 @@ class _RegisterState extends State<Register> {
                         ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
-                            print('CEK "Daftarkan di sini"');
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterInstitution(),));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const RegisterInstitution(),
+                                ));
                           },
                       ),
                     ],
@@ -94,21 +216,22 @@ class _RegisterState extends State<Register> {
               ),
             ),
             SizedBox(height: mq.size.height * 0.01),
-
             custom.CustomTextField(
+              controller: _passwordController,
               hintText: 'Kata Sandi',
               isPassword: true,
               obscureText: _obscurePassword,
-              toggleObscure: () => setState(() => _obscurePassword = !_obscurePassword),
+              toggleObscure: () =>
+                  setState(() => _obscurePassword = !_obscurePassword),
             ),
-
             custom.CustomTextField(
+              controller: _confirmPasswordController,
               hintText: 'Konfirmasi Kata Sandi',
               isPassword: true,
               obscureText: _obscureConfirmPassword,
-              toggleObscure: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
+              toggleObscure: () => setState(
+                  () => _obscureConfirmPassword = !_obscureConfirmPassword),
             ),
-
             Row(
               children: [
                 Checkbox(
@@ -123,7 +246,6 @@ class _RegisterState extends State<Register> {
                 ),
               ],
             ),
-
             SizedBox(height: mq.size.height * 0.02),
             SizedBox(
               width: double.infinity,
@@ -133,11 +255,10 @@ class _RegisterState extends State<Register> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(mq.size.width * 0.02),
                   ),
-                  padding: EdgeInsets.symmetric(vertical: mq.size.height * 0.018),
+                  padding:
+                      EdgeInsets.symmetric(vertical: mq.size.height * 0.018),
                 ),
-                onPressed: () {
-                  Navigator.push(context,MaterialPageRoute(builder: (context) => NavBarScreen(),));
-                },
+                onPressed: _handleRegister,
                 child: Text(
                   'DAFTAR',
                   style: TextStyle(
