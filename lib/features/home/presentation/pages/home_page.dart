@@ -13,13 +13,13 @@ class HomePage extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, 
+      backgroundColor: Colors.white,
       body: RefreshIndicator(
         onRefresh: controller.refreshData,
         child: CustomScrollView(
           slivers: [
             const HomeAppBar(),
-            
+
             // Konten list
             Obx(() {
               if (controller.isLoading && controller.publications.isEmpty) {
@@ -27,7 +27,7 @@ class HomePage extends GetView<HomeController> {
                   child: LoadingIndicator(),
                 );
               }
-              
+
               if (controller.publications.isEmpty) {
                 return SliverToBoxAdapter(
                   child: Center(
@@ -43,9 +43,12 @@ class HomePage extends GetView<HomeController> {
                           const SizedBox(height: 16),
                           Text(
                             'Belum ada konten',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              color: Colors.grey[600],
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  color: Colors.grey[600],
+                                ),
                           ),
                         ],
                       ),
@@ -53,7 +56,7 @@ class HomePage extends GetView<HomeController> {
                   ),
                 );
               }
-              
+
               return SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
@@ -63,9 +66,12 @@ class HomePage extends GetView<HomeController> {
                       onTap: () {
                         PersistentNavBarNavigator.pushNewScreen(
                           context,
-                          screen: const DetailContent(),
+                          screen: DetailContent(
+                            contentId: publication.id.toString(),
+                          ),
                           withNavBar: true, // IMPORTANT: This keeps the navbar
-                          pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                          pageTransitionAnimation:
+                              PageTransitionAnimation.cupertino,
                         );
                       },
                     );

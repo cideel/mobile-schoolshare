@@ -33,7 +33,8 @@ class Settings extends StatelessWidget {
                     height: 100.h,
                     width: 100.w,
                     child: CircleAvatar(
-                      backgroundImage: AssetImage('assets/images/example-profile.jpg'),
+                      backgroundImage:
+                          AssetImage('assets/images/example-profile.jpg'),
                       backgroundColor: AppColor.componentColor,
                     ),
                   ),
@@ -52,9 +53,7 @@ class Settings extends StatelessWidget {
                     "SMA Negeri 1 Tebing Tinggi",
                     style: AppTextStyle.subtitle,
                   ),
-                 
                   Padding(padding: EdgeInsets.symmetric(vertical: 35.h)),
-
                   ListTile(
                     leading: Icon(Icons.person_rounded),
                     title: Text(
@@ -62,9 +61,8 @@ class Settings extends StatelessWidget {
                       style: TextStyle(fontSize: 15.sp),
                     ),
                     trailing: Icon(Icons.arrow_forward_ios),
-                    
                   ),
-                   Divider(
+                  Divider(
                     color: Colors.grey,
                     thickness: 0.8,
                   ),

@@ -3,7 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
 
 class DetailHeader extends StatelessWidget {
-  const DetailHeader({super.key});
+  final String title;
+  const DetailHeader({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -11,11 +12,11 @@ class DetailHeader extends StatelessWidget {
     return SliverAppBar(
       pinned: true,
       centerTitle: false,
-      expandedHeight: mq.size.height * 0.08, // Responsive height
+      expandedHeight: mq.size.height * 0.08,
       backgroundColor: Colors.white,
       title: Text(
+        title,
         overflow: TextOverflow.ellipsis,
-        'Proximate Analysis of Merang Mushrooms (Volvariella volvacea) Cultivated on Corncob and Rice Bran Media',
         style: AppTextStyle.cardTitle.copyWith(
           fontSize: 15.sp,
           color: Colors.black,

@@ -1,15 +1,15 @@
 import 'package:get/get.dart';
+import 'package:schoolshare/data/repositories/auth_repository_impl.dart';
 import '../../domain/entities/auth_state.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
-import '../../data/repositories/auth_repository_impl.dart';
 
 class AuthController extends GetxController {
   final AuthRepository _authRepository = AuthRepositoryImpl();
 
   // Reactive variables
   final Rx<AuthState> _authState = const AuthState().obs;
-  
+
   // Getters for easy access
   Rx<AuthState> get authStateRx => _authState;
   AuthState get authState => _authState.value;
@@ -24,11 +24,9 @@ class AuthController extends GetxController {
     required String password,
   }) async {
     try {
-      _authState.value = _authState.value.copyWith(
-        status: AuthStatus.loading, 
-        isLoading: true
-      );
-      
+      _authState.value = _authState.value
+          .copyWith(status: AuthStatus.loading, isLoading: true);
+
       if (email.isEmpty || password.isEmpty) {
         throw Exception('Email dan password harus diisi');
       }
@@ -37,8 +35,9 @@ class AuthController extends GetxController {
         throw Exception('Format email tidak valid');
       }
 
-      final user = await _authRepository.login(email: email, password: password);
-      
+      final user =
+          await _authRepository.login(email: email, password: password);
+
       _authState.value = _authState.value.copyWith(
         status: AuthStatus.authenticated,
         user: user,
@@ -48,10 +47,12 @@ class AuthController extends GetxController {
     } catch (e) {
       print('Login error caught: $e'); // Debug print
       final errorMessage = e.toString().replaceAll('Exception: ', '');
-      
+
       _authState.value = _authState.value.copyWith(
         status: AuthStatus.error,
-        errorMessage: errorMessage.isNotEmpty ? errorMessage : 'Terjadi kesalahan saat login',
+        errorMessage: errorMessage.isNotEmpty
+            ? errorMessage
+            : 'Terjadi kesalahan saat login',
         isLoading: false,
       );
     }
@@ -63,14 +64,12 @@ class AuthController extends GetxController {
     required String password,
     required String confirmPassword,
     required String category,
-    required String institution,
+    required int institution,
     required bool agreeToTerms,
   }) async {
     try {
-      _authState.value = _authState.value.copyWith(
-        status: AuthStatus.loading, 
-        isLoading: true
-      );
+      _authState.value = _authState.value
+          .copyWith(status: AuthStatus.loading, isLoading: true);
 
       // Input validation
       if (name.isEmpty || email.isEmpty || password.isEmpty) {
@@ -93,16 +92,13 @@ class AuthController extends GetxController {
         throw Exception('Kategori harus dipilih');
       }
 
-      if (institution.isEmpty) {
-        throw Exception('Institusi harus dipilih');
-      }
-
       if (!agreeToTerms) {
         throw Exception('Anda harus menyetujui syarat dan ketentuan');
       }
 
       // Create user entity
       final user = User(
+        name: name,
         id: DateTime.now().millisecondsSinceEpoch, // int instead of string
         roleGroupId: 1, // Default role group ID, adjust as needed
         email: email,
@@ -122,10 +118,12 @@ class AuthController extends GetxController {
     } catch (e) {
       print('Register error caught: $e'); // Debug print
       final errorMessage = e.toString().replaceAll('Exception: ', '');
-      
+
       _authState.value = _authState.value.copyWith(
         status: AuthStatus.error,
-        errorMessage: errorMessage.isNotEmpty ? errorMessage : 'Terjadi kesalahan saat registrasi',
+        errorMessage: errorMessage.isNotEmpty
+            ? errorMessage
+            : 'Terjadi kesalahan saat registrasi',
         isLoading: false,
       );
     }

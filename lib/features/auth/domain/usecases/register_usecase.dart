@@ -1,4 +1,4 @@
-import 'package:schoolshare/features/auth/domain/entities/user.dart';
+import 'package:schoolshare/data/models/users_model.dart';
 import 'package:schoolshare/features/auth/domain/repositories/auth_repository.dart';
 
 class RegisterUseCase {
@@ -6,59 +6,64 @@ class RegisterUseCase {
 
   RegisterUseCase(this.repository);
 
-  Future<User> call({
+  Future<UserModel> call({
     required String name,
     required String email,
     required String password,
     required String confirmPassword,
-    required String role,
-    required String university,
-    String? department,
+    required String category,
+    required int institution,
+    required bool agreeToTerms,
+    required String position,
   }) async {
-    // Validasi input
     if (name.isEmpty) {
-      throw Exception('Nama tidak boleh kosong');
+      throw Exception('Nama harus diisi');
     }
 
     if (email.isEmpty) {
-      throw Exception('Email tidak boleh kosong');
-    }
-
-    if (password.isEmpty) {
-      throw Exception('Password tidak boleh kosong');
-    }
-
-    if (confirmPassword.isEmpty) {
-      throw Exception('Konfirmasi password tidak boleh kosong');
-    }
-
-    if (password != confirmPassword) {
-      throw Exception('Password dan konfirmasi password tidak sama');
-    }
-
-    if (password.length < 6) {
-      throw Exception('Password harus minimal 6 karakter');
+      throw Exception('Email harus diisi');
     }
 
     if (!_isValidEmail(email)) {
       throw Exception('Format email tidak valid');
     }
 
-    if (role.isEmpty) {
-      throw Exception('Role harus dipilih');
+    if (password.isEmpty) {
+      throw Exception('Password harus diisi');
     }
 
-    if (university.isEmpty) {
-      throw Exception('Universitas harus dipilih');
+    if (password.length < 6) {
+      throw Exception('Password minimal 6 karakter');
     }
 
+    // Konfirmasi password tidak boleh kosong (validasi sudah mencakup ini, tapi ditambah untuk eksplisit)
+    if (confirmPassword.isEmpty) {
+      throw Exception('Konfirmasi password harus diisi');
+    }
+
+    if (password != confirmPassword) {
+      throw Exception('Konfirmasi password tidak cocok');
+    }
+
+    if (category.isEmpty) {
+      throw Exception('Kategori harus dipilih');
+    }
+
+    if (!agreeToTerms) {
+      throw Exception('Anda harus menyetujui syarat dan ketentuan');
+    }
+    // ----------------------------------------
+
+    // Panggilan ke Repository dengan parameter yang baru
     return await repository.register(
       name: name,
       email: email,
       password: password,
-      role: role,
-      university: university,
-      department: department,
+      confirmPassword: confirmPassword,
+      category: category,
+      institutionId: institution,
+      agreeToTerms: agreeToTerms,
+      position: position,
     );
   }
 

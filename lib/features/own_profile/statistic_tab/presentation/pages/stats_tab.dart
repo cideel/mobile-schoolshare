@@ -1,9 +1,15 @@
+// lib/features/own_profile/statistic_tab/presentation/pages/stats_tab.dart (Diperbarui)
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:schoolshare/core/constants/color.dart';
+import 'package:schoolshare/features/own_profile/controllers/statistic_tab_controller.dart';
 
 class StatsTab extends StatelessWidget {
-  const StatsTab({super.key});
+  // Ambil Controller
+  final StatisticTabController controller = Get.find<StatisticTabController>();
+
+  StatsTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,64 +20,92 @@ class StatsTab extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-        child: ListView(
-          children: [
-            const SizedBox(height: 20),
-            Text(
-              "Overview",
-              style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: const [
-                Expanded(
-                  child: InfoBox(score: "7,6", title: "RI Score"),
+
+        // 🔥 Gunakan OBX untuk membuat tampilan reaktif terhadap status data
+        child: controller.obx(
+          (user) {
+            // Data sudah sukses dimuat, kini gunakan Obx di dalam ListView
+            return ListView(
+              children: [
+                const SizedBox(height: 20),
+                Text(
+                  "Overview",
+                  style:
+                      TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(width: 10),
-                Expanded(
-                  child: InfoBox(score: "1000", title: "Dibaca"),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: const [
-                Expanded(
-                  child: InfoBox(score: "69", title: "Rekomendasi"),
-                ),
-                SizedBox(width: 10),
-                Expanded(
-                  child: InfoBox(score: "12", title: "Sitasi"),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Container(
-              height: 45,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                border: Border.all(color: AppColor.componentColor),
-              ),
-              child: InkWell(
-                onTap: () {
-                  // Aksi jika diklik
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.trending_up, color: AppColor.componentColor),
-                    const SizedBox(width: 8),
-                    Text(
-                      "Lihat laporan status mingguan",
-                      style: TextStyle(color: AppColor.componentColor),
+                const SizedBox(height: 20),
+
+                // Gunakan Obx untuk memperbarui InfoBox secara independen
+                Obx(() => Row(
+                      children: [
+                        Expanded(
+                          // Data RI Score
+                          child: InfoBox(
+                              score: controller.riScore.value,
+                              title: "RI Score"),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          // Data Dibaca
+                          child: InfoBox(
+                              score: controller.readDocs.value,
+                              title: "Dibaca"),
+                        ),
+                      ],
+                    )),
+                const SizedBox(height: 10),
+                Obx(() => Row(
+                      children: [
+                        Expanded(
+                          // Data Rekomendasi
+                          child: InfoBox(
+                              score: controller.recommendation.value,
+                              title: "Rekomendasi"),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          // Data Sitasi
+                          child: InfoBox(
+                              score: controller.sitasi.value, title: "Sitasi"),
+                        ),
+                      ],
+                    )),
+                const SizedBox(height: 20),
+
+                // Button tetap statis
+                Container(
+                  height: 45,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AppColor.componentColor),
+                  ),
+                  child: InkWell(
+                    onTap: () {
+                      // Aksi jika diklik
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.trending_up, color: AppColor.componentColor),
+                        const SizedBox(width: 8),
+                        Text(
+                          "Lihat laporan status mingguan",
+                          style: TextStyle(color: AppColor.componentColor),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            const Divider(thickness: 0.5, color: Colors.grey),
-          ],
+                const SizedBox(height: 10),
+                const Divider(thickness: 0.5, color: Colors.grey),
+              ],
+            );
+          },
+          // Tampilkan loading saat fetch data
+          onLoading: const Center(child: CircularProgressIndicator()),
+          // Tampilkan error jika terjadi
+          onError: (error) =>
+              Center(child: Text("Gagal memuat statistik: $error")),
         ),
       ),
     );
@@ -92,6 +126,7 @@ class InfoBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ... (kode InfoBox tetap sama) ...
     return Container(
       height: 110,
       decoration: BoxDecoration(

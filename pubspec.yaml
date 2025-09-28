@@ -2,7 +2,7 @@ name: schoolshare
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -36,12 +36,19 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  intl: ^0.20.2
+  http: ^1.5.0
+  shared_preferences: ^2.5.3
+  laravel_echo: ^1.0.0-beta.1
+  socket_io_client: ^3.1.2
+  jwt_decoder: ^2.0.1
+  web_socket_channel: ^3.0.3
+  image_picker: ^1.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  persistent_bottom_nav_bar: ^6.2.1  
-
+  persistent_bottom_nav_bar: ^6.2.1
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -55,9 +62,8 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   uses-material-design: true
-  
+
   assets:
     - assets/images/example-logo-sma.png
     - assets/images/icon-add.png
@@ -76,10 +82,6 @@ flutter:
     - family: Roboto
       fonts:
         - asset: assets/fonts/Roboto-Regular.ttf
-   
-
-          
-  
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

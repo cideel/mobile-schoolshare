@@ -1,21 +1,24 @@
-// lib/features/auth/domain/repositories/auth_repository.dart
-import '../entities/user.dart';
+
+
+import 'package:schoolshare/data/models/users_model.dart';
 
 abstract class AuthRepository {
-  Future<User> login({
+  Future<UserModel> login({
     required String email,
     required String password,
   });
 
-  Future<User> register({
+  Future<UserModel> register({
+    required String name,
     required String email,
     required String password,
-    required String name,
-    required String role,
-    required String university,
-    String? department,
+    required String confirmPassword,
+    required String category,
+    required int institutionId, // <-- Nama parameter diperbarui di sini
+    required bool agreeToTerms,
+    required String position,
   });
 
   Future<void> logout();
-  Future<User?> getCurrentUser();
+  Future<UserModel?> getCurrentUser();
 }

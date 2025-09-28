@@ -1,4 +1,9 @@
 import 'package:get/get.dart';
+import 'package:schoolshare/features/detail_content/presentation/bindings/content_detail_binding.dart';
+import 'package:schoolshare/features/detail_content/presentation/pages/detail_content.dart';
+import 'package:schoolshare/features/own_profile/bindings/header_profile_binding.dart';
+import 'package:schoolshare/features/own_profile/bindings/profile_tab_profile_binding.dart';
+import 'package:schoolshare/features/own_profile/bindings/statistic_tab_binding.dart';
 import '../../features/auth/bindings/auth_binding.dart';
 import '../../features/home/bindings/home_binding.dart';
 import '../../features/auth/presentation/pages/login.dart';
@@ -18,8 +23,8 @@ class AppPages {
     ),
     GetPage(
       name: Routes.LOGIN,
-      page: () => const LoginPage(),
-      binding: AuthBinding(), // 🔥 
+      page: () => LoginPage(),
+      binding: AuthBinding(), // 🔥
     ),
     GetPage(
       name: Routes.REGISTER,
@@ -37,7 +42,19 @@ class AppPages {
       bindings: [
         AuthBinding(),
         HomeBinding(),
+        HeaderProfileBinding(),
+        ProfileTabBinding(),
+        StatisticTabBinding(),
       ],
+    ),
+    GetPage(
+      name: Routes.DETAIL_CONTENT,
+      page: () {
+        // Mendapatkan contentId dari argumen saat navigasi
+        final contentId = Get.arguments as String? ?? '';
+        return DetailContent(contentId: contentId);
+      },
+      binding: ContentDetailBinding(),
     ),
   ];
 }

@@ -1,85 +1,71 @@
 // lib/data/repositories/home_repository_impl.dart
-import '../models/publication.dart';
-import '../datasources/home_mock_data.dart';
-import '../../features/home/domain/repositories/home_repository.dart';
+
+import 'package:schoolshare/core/services/home/content_matrix_service.dart';
+import 'package:schoolshare/core/services/home/home_service.dart';
+import 'package:schoolshare/data/models/publication.dart';
+import 'package:schoolshare/features/home/domain/repositories/home_repository.dart';
 
 class HomeRepositoryImpl implements HomeRepository {
+  final HomeServices _homeService;
+  final ContentMetricsService _metricsService; // Variabel baru
+
+  // 🔥 Konstruktor yang menerima DUA Service
+  HomeRepositoryImpl(this._homeService, this._metricsService);
+
   @override
   Future<List<Publication>> getPublications() async {
-    await Future.delayed(HomeMockData.networkDelay);
-    
-    try {
-      return HomeMockData.publications;
-    } catch (e) {
-      throw Exception('Failed to fetch publications: $e');
-    }
+    return await _homeService.fetchPublicationsHttp();
   }
 
   @override
+  Stream<Publication> getRealtimeUpdates() {
+    return _homeService.getRealtimeUpdates();
+  }
+
+  // 🔥 IMPLEMENTASI METRIK
+  @override
+  Future<void> toggleBookmark(String contentId) async {
+    await _metricsService.toggleBookmark(contentId);
+  }
+
+  @override
+  Future<void> toggleRecommendation(String contentId) async {
+    await _metricsService.recommend(contentId);
+  }
+
+  @override
+  Future<void> shareContent(String contentId) async {
+    await _metricsService.share(contentId);
+  }
+
+  @override
+  Future<void> downloadContent(String contentId) async {
+    await _metricsService.download(contentId);
+  }
+
+  // --- SIMULASI METHOD LAIN ---
+  @override
   Future<List<Publication>> getPublicationsByCategory(String category) async {
-    await Future.delayed(HomeMockData.networkDelay);
-    
-    try {
-      if (category == 'All') {
-        return HomeMockData.publications;
-      }
-      
-      return HomeMockData.publications
-          .where((publication) => publication.category == category)
-          .toList();
-    } catch (e) {
-      throw Exception('Failed to fetch publications by category: $e');
-    }
+    return Future.value([]);
   }
 
   @override
   Future<List<String>> getCategories() async {
-    await Future.delayed(HomeMockData.networkDelay);
-    
-    try {
-      return HomeMockData.categories;
-    } catch (e) {
-      throw Exception('Failed to fetch categories: $e');
-    }
+    return ['Semua', 'Artikel', 'Jurnal'];
   }
 
   @override
   Future<List<String>> getPopularTopics() async {
-    await Future.delayed(HomeMockData.networkDelay);
-    
-    try {
-      return HomeMockData.popularTopics;
-    } catch (e) {
-      throw Exception('Failed to fetch popular topics: $e');
-    }
+    return ['Biologi', 'Fisika', 'Matematika'];
   }
 
   @override
-  Future<Publication> getPublicationById(String id) async {
-    await Future.delayed(HomeMockData.networkDelay);
-    
-    try {
-      return HomeMockData.publications
-          .firstWhere((publication) => publication.id == id);
-    } catch (e) {
-      throw Exception('Publication not found: $e');
-    }
+  Future<Publication> getPublicationById(String id) {
+    throw UnimplementedError();
   }
 
   @override
-  Future<List<Publication>> searchPublications(String query) async {
-    await Future.delayed(HomeMockData.networkDelay);
-    
-    try {
-      return HomeMockData.publications
-          .where((publication) =>
-              publication.title.toLowerCase().contains(query.toLowerCase()) ||
-              publication.description.toLowerCase().contains(query.toLowerCase()) ||
-              publication.authors.any((author) =>
-                  author.toLowerCase().contains(query.toLowerCase())))
-          .toList();
-    } catch (e) {
-      throw Exception('Failed to search publications: $e');
-    }
+  Future<List<Publication>> searchPublications(String query) {
+    throw UnimplementedError();
   }
 }

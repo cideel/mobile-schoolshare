@@ -4,13 +4,13 @@ import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/core/constants/color.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
-import 'package:schoolshare/features/auth/domain/entities/auth_state.dart';
 import 'package:schoolshare/features/auth/presentation/pages/add_institution.dart';
 import 'package:schoolshare/features/auth/controllers/auth_controller.dart';
-import 'package:schoolshare/features/auth/presentation/widgets/custom_dropdown.dart' as dropdown;
+import 'package:schoolshare/features/auth/presentation/widgets/custom_dropdown.dart'
+    as dropdown;
 import 'package:schoolshare/features/auth/presentation/widgets/custom_search_institution.dart';
-import 'package:schoolshare/features/auth/presentation/widgets/custom_text_field.dart' as custom;
-import 'package:schoolshare/core/widgets/navbart.dart';
+import 'package:schoolshare/features/auth/presentation/widgets/custom_text_field.dart'
+    as custom;
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -25,17 +25,26 @@ class _RegisterState extends State<Register> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  
+  final _positionController = TextEditingController();
+
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _agree = false;
   String? _selectedCategory;
-  String _selectedInstitution = '';
-  
+
+  // Perbarui state untuk menyimpan ID institusi yang dibutuhkan API
+  int? _selectedInstitutionId; // ID yang akan dikirim ke API
+  String _selectedInstitutionName = ''; // Nama yang akan ditampilkan di UI
+
   // Lazy getter for AuthController
   AuthController get authController => Get.find<AuthController>();
 
-  final List<String> _categories = ['SD/MI', 'SMP', 'SMA/SMK/MA', 'Perguruan Tinggi'];
+  final List<String> _categories = [
+    'SD/MI',
+    'SMP',
+    'SMA/SMK/MA',
+    'Perguruan Tinggi'
+  ];
 
   @override
   void initState() {
@@ -48,6 +57,7 @@ class _RegisterState extends State<Register> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _positionController.dispose();
     super.dispose();
   }
 
@@ -61,9 +71,15 @@ class _RegisterState extends State<Register> {
       return;
     }
 
-    if (_selectedInstitution.isEmpty) {
-      // For now, use a default institution if none selected
-      _selectedInstitution = 'Institusi Default';
+    // Ganti _selectedInstitution.isEmpty menjadi _selectedInstitutionId == null
+    if (_selectedInstitutionId == null) {
+      _showErrorSnackBar(context, 'Silakan pilih institusi');
+      return;
+    }
+
+    if (_positionController.text.trim().isEmpty) {
+      _showErrorSnackBar(context, 'Posisi/Role harus diisi');
+      return;
     }
 
     if (!_agree) {
@@ -77,7 +93,8 @@ class _RegisterState extends State<Register> {
       password: _passwordController.text,
       confirmPassword: _confirmPasswordController.text,
       category: _selectedCategory!,
-      institution: _selectedInstitution,
+      institutionId: _selectedInstitutionId!,
+      position: _positionController.text.trim(),
       agreeToTerms: _agree,
     );
   }
@@ -155,196 +172,235 @@ class _RegisterState extends State<Register> {
     try {
       return Obx(() {
         final authState = authController.authState;
-      
-      return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: mq.size.height * 0.02),
-              Center(
-                child: Text(
-                  "Daftar Akun",
-                  style: TextStyle(fontSize: 25.sp, fontWeight: FontWeight.bold),
-                ),
-              ),
-              SizedBox(height: mq.size.height * 0.03),
 
-              // Nama Lengkap field
-              custom.CustomTextField(
-                hintText: 'Nama Lengkap',
-                controller: _nameController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Nama lengkap harus diisi';
-                  }
-                  if (value.length < 2) {
-                    return 'Nama minimal 2 karakter';
-                  }
-                  return null;
-                },
-              ),
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (authState.hasError && authState.errorMessage != null) {
+            _showErrorSnackBar(context, authState.errorMessage!);
+            authController.clearError();
+          }
+          if (authState.isAuthenticated && authState.user != null) {
+            _showSuccessSnackBar(context, authState.user!.name!);
+            Get.offAllNamed('/home');
+          }
+        });
 
-              // Email field
-              custom.CustomTextField(
-                hintText: 'Email',
-                controller: _emailController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Email harus diisi';
-                  }
-                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                    return 'Format email tidak valid';
-                  }
-                  return null;
-                },
-              ),
-
-              // Category dropdown
-              dropdown.CustomDropdown(
-                hint: 'Pilih Kategori',
-                items: _categories,
-                value: _selectedCategory,
-                onChanged: (val) => setState(() => _selectedCategory = val),
-              ),
-
-              // Institution search
-              const CustomInstitutionSearchField(),
-
-              Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: mq.size.height * 0.01),
-                  child: RichText(
-                    text: TextSpan(
-                      text: 'Tidak menemukan institusi? ',
-                      style: AppTextStyle.caption.copyWith(
-                        fontWeight: FontWeight.w300,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: 'Daftarkan di sini',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12.sp,
-                            color: Colors.blue,
-                          ),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              debugPrint('Navigate to register institution');
-                              Get.to(() => const RegisterInstitution());
-                            },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: mq.size.height * 0.01),
-
-              // Password field
-              custom.CustomTextField(
-                hintText: 'Kata Sandi',
-                controller: _passwordController,
-                isPassword: true,
-                obscureText: _obscurePassword,
-                toggleObscure: () => setState(() => _obscurePassword = !_obscurePassword),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Password harus diisi';
-                  }
-                  if (value.length < 6) {
-                    return 'Password minimal 6 karakter';
-                  }
-                  return null;
-                },
-              ),
-
-              // Confirm Password field
-              custom.CustomTextField(
-                hintText: 'Konfirmasi Kata Sandi',
-                controller: _confirmPasswordController,
-                isPassword: true,
-                obscureText: _obscureConfirmPassword,
-                toggleObscure: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Konfirmasi password harus diisi';
-                  }
-                  if (value != _passwordController.text) {
-                    return 'Konfirmasi password tidak cocok';
-                  }
-                  return null;
-                },
-              ),
-
-              // Terms and conditions checkbox
-              Row(
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            iconTheme: const IconThemeData(color: Colors.black),
+          ),
+          body: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Checkbox(
-                    value: _agree,
-                    onChanged: (val) => setState(() => _agree = val ?? false),
-                  ),
-                  Expanded(
+                  SizedBox(height: mq.size.height * 0.02),
+                  Center(
                     child: Text(
-                      'Saya akan menyetujui syarat dan ketentuan',
-                      style: TextStyle(fontSize: 12.sp),
+                      "Daftar Akun",
+                      style: TextStyle(
+                          fontSize: 25.sp, fontWeight: FontWeight.bold),
                     ),
                   ),
+                  SizedBox(height: mq.size.height * 0.03),
+
+                  // Nama Lengkap field
+                  custom.CustomTextField(
+                    hintText: 'Nama Lengkap',
+                    controller: _nameController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Nama lengkap harus diisi';
+                      }
+                      if (value.length < 2) {
+                        return 'Nama minimal 2 karakter';
+                      }
+                      return null;
+                    },
+                  ),
+
+                  // Email field
+                  custom.CustomTextField(
+                    hintText: 'Email',
+                    controller: _emailController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Email harus diisi';
+                      }
+                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                          .hasMatch(value)) {
+                        return 'Format email tidak valid';
+                      }
+                      return null;
+                    },
+                  ),
+
+                  // Category dropdown
+                  dropdown.CustomDropdown(
+                    hint: 'Pilih Kategori',
+                    items: _categories,
+                    value: _selectedCategory,
+                    onChanged: (val) => setState(() => _selectedCategory = val),
+                  ),
+
+                  // Institution search (Diperbarui dengan callback)
+                  CustomInstitutionSearchField(
+                    onInstitutionSelected: (id, name) {
+                      setState(() {
+                        _selectedInstitutionId = id;
+                        _selectedInstitutionName = name;
+                      });
+                    },
+                    selectedName: _selectedInstitutionName,
+                  ),
+
+                  // Posisi / Role field
+                  custom.CustomTextField(
+                    hintText: 'Posisi/Role Anda',
+                    controller: _positionController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Posisi/Role harus diisi';
+                      }
+                      return null;
+                    },
+                  ),
+
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: mq.size.height * 0.01),
+                      child: RichText(
+                        text: TextSpan(
+                          text: 'Tidak menemukan institusi? ',
+                          style: AppTextStyle.caption.copyWith(
+                            fontWeight: FontWeight.w300,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: 'Daftarkan di sini',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12.sp,
+                                color: Colors.blue,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  debugPrint(
+                                      'Navigate to register institution');
+                                  Get.to(() => const RegisterInstitution());
+                                },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: mq.size.height * 0.01),
+
+                  // Password field
+                  custom.CustomTextField(
+                    hintText: 'Kata Sandi',
+                    controller: _passwordController,
+                    isPassword: true,
+                    obscureText: _obscurePassword,
+                    toggleObscure: () =>
+                        setState(() => _obscurePassword = !_obscurePassword),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Password harus diisi';
+                      }
+                      if (value.length < 6) {
+                        return 'Password minimal 6 karakter';
+                      }
+                      return null;
+                    },
+                  ),
+
+                  // Confirm Password field
+                  custom.CustomTextField(
+                    hintText: 'Konfirmasi Kata Sandi',
+                    controller: _confirmPasswordController,
+                    isPassword: true,
+                    obscureText: _obscureConfirmPassword,
+                    toggleObscure: () => setState(() =>
+                        _obscureConfirmPassword = !_obscureConfirmPassword),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Konfirmasi password harus diisi';
+                      }
+                      if (value != _passwordController.text) {
+                        return 'Konfirmasi password tidak cocok';
+                      }
+                      return null;
+                    },
+                  ),
+
+                  // Terms and conditions checkbox
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: _agree,
+                        onChanged: (val) =>
+                            setState(() => _agree = val ?? false),
+                      ),
+                      Expanded(
+                        child: Text(
+                          'Saya akan menyetujui syarat dan ketentuan',
+                          style: TextStyle(fontSize: 12.sp),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: mq.size.height * 0.02),
+
+                  // Register button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColor.componentColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(mq.size.width * 0.02),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                            vertical: mq.size.height * 0.018),
+                      ),
+                      onPressed: authState.isLoading ? null : _handleRegister,
+                      child: authState.isLoading
+                          ? SizedBox(
+                              height: 20.h,
+                              width: 20.w,
+                              child: const CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            )
+                          : Text(
+                              'DAFTAR',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                    ),
+                  ),
+                  SizedBox(height: mq.size.height * 0.04),
                 ],
               ),
-
-              SizedBox(height: mq.size.height * 0.02),
-              
-              // Register button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColor.componentColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(mq.size.width * 0.02),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: mq.size.height * 0.018),
-                  ),
-                  onPressed: authState.isLoading ? null : _handleRegister,
-                  child: authState.isLoading
-                      ? SizedBox(
-                          height: 20.h,
-                          width: 20.w,
-                          child: const CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                          ),
-                        )
-                      : Text(
-                          'DAFTAR',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                ),
-              ),
-              SizedBox(height: mq.size.height * 0.04),
-            ],
+            ),
           ),
-        ),
-      ),
-    );
-    }); // end of Obx
+        );
+      });
     } catch (e) {
-      // AuthController not ready yet, show loading
       return const Scaffold(
         body: Center(
           child: CircularProgressIndicator(),

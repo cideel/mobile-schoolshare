@@ -1,60 +1,70 @@
+// data/repositories/auth_repository_impl.dart
+import 'package:schoolshare/core/services/auth/login_services.dart';
 import 'package:schoolshare/data/models/users_model.dart';
-
-import '../../features/auth/domain/entities/user.dart';
+import 'package:schoolshare/data/models/auth_response_model.dart';
 import '../../features/auth/domain/repositories/auth_repository.dart';
-import '../../core/services/auth_mock_api_client.dart';
-import '../datasources/api_exception.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
+  final AuthService _authService;
+
+  AuthRepositoryImpl({AuthService? authService})
+      : _authService = authService ?? AuthService();
+
   @override
-  Future<User> login({
+  Future<UserModel> login({
     required String email,
     required String password,
   }) async {
     try {
-      final response = await MockApiClient.post('/auth/login', body: {
-        'email': email,
-        'password': password,
-      });
+      final Map<String, dynamic> data = await _authService.login(
+        email: email,
+        password: password,
+      );
 
-      final userData = response['data']['user'] as Map<String, dynamic>;
-      return UserModel.fromJson(userData);
-    } on ApiException catch (e) {
-      // Re-throw ApiException with original message
-      throw Exception(e.message);
+      // Parse pakai AuthResponseModel
+      final authResponse = AuthResponseModel.fromJson(data);
+
+      // Inject token ke user
+      return authResponse.user.copyWith(token: authResponse.token);
+    } on Exception {
+      rethrow;
     } catch (e) {
-      // Handle other exceptions
-      throw Exception('Terjadi kesalahan: ${e.toString()}');
+      throw Exception(
+          'Terjadi kesalahan tak terduga saat login: ${e.toString()}');
     }
   }
 
   @override
-  Future<User> register({
+  Future<UserModel> register({
+    required String name,
     required String email,
     required String password,
-    required String name,
-    required String role,
-    required String university,
-    String? department,
+    required String confirmPassword,
+    required String category,
+    required int institutionId,
+    required bool agreeToTerms,
+    required String position,
   }) async {
     try {
-      final response = await MockApiClient.post('/auth/register', body: {
-        'email': email,
-        'password': password,
-        'name': name,
-        'role': role,
-        'university': university,
-        'department': department,
-      });
+      final Map<String, dynamic> data = await _authService.register(
+        name: name,
+        email: email,
+        password: password,
+        confirmPassword: confirmPassword,
+        category: category,
+        institutionId: institutionId, // key tetap dihandle di AuthService
+        agreeToTerms: agreeToTerms,
+        position: position,
+      );
 
-      final userData = response['data']['user'] as Map<String, dynamic>;
-      return UserModel.fromJson(userData);
-    } on ApiException catch (e) {
-      // Re-throw ApiException with original message
-      throw Exception(e.message);
+      final authResponse = AuthResponseModel.fromJson(data);
+
+      return authResponse.user.copyWith(token: authResponse.token);
+    } on Exception {
+      rethrow;
     } catch (e) {
-      // Handle other exceptions
-      throw Exception('Terjadi kesalahan: ${e.toString()}');
+      throw Exception(
+          'Terjadi kesalahan tak terduga saat registrasi: ${e.toString()}');
     }
   }
 
@@ -64,8 +74,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<User?> getCurrentUser() async {
-    // Mock implementation
+  Future<UserModel?> getCurrentUser() async {
     return null;
   }
 }

@@ -36,7 +36,6 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        
         backgroundColor: AppColor.componentColor,
         elevation: 1,
         leading: BackButton(color: Colors.white),
@@ -44,7 +43,6 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
           controller: _searchController,
           onChanged: () => setState(() {}),
         ),
-
       ),
       body: Column(
         children: [
@@ -77,5 +75,4 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       ),
     );
   }
-
 }

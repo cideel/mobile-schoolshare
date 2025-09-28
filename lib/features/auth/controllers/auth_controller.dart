@@ -1,14 +1,18 @@
+// lib/features/auth/controllers/auth_controller.dart
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import '../domain/entities/auth_state.dart';
 import '../domain/entities/user.dart';
 import '../domain/repositories/auth_repository.dart';
 import 'package:schoolshare/data/repositories/auth_repository_impl.dart';
+import 'package:schoolshare/core/utils/storage_utils.dart'; // ⬅️ tambahkan ini
 
 class AuthController extends GetxController {
   final AuthRepository _authRepository = AuthRepositoryImpl();
 
   final Rx<AuthState> _authState = const AuthState().obs;
-  
+
   Rx<AuthState> get authStateRx => _authState;
   AuthState get authState => _authState.value;
   bool get isLoading => _authState.value.isLoading;
@@ -22,11 +26,9 @@ class AuthController extends GetxController {
     required String password,
   }) async {
     try {
-      _authState.value = _authState.value.copyWith(
-        status: AuthStatus.loading, 
-        isLoading: true
-      );
-      
+      _authState.value = _authState.value
+          .copyWith(status: AuthStatus.loading, isLoading: true);
+
       if (email.isEmpty || password.isEmpty) {
         throw Exception('Email dan password harus diisi');
       }
@@ -35,8 +37,16 @@ class AuthController extends GetxController {
         throw Exception('Format email tidak valid');
       }
 
-      final user = await _authRepository.login(email: email, password: password);
-      
+      final user = await _authRepository.login(
+        email: email,
+        password: password,
+      );
+
+      if (user.token != null) {
+        await StorageUtils.saveToken(user.token!);
+        log('Saved token: ${user.token}');
+      }
+
       _authState.value = _authState.value.copyWith(
         status: AuthStatus.authenticated,
         user: user,
@@ -44,12 +54,14 @@ class AuthController extends GetxController {
         errorMessage: null,
       );
     } catch (e) {
-      print('Login error caught: $e'); // Debug print
+      print('Login error caught: $e');
       final errorMessage = e.toString().replaceAll('Exception: ', '');
-      
+
       _authState.value = _authState.value.copyWith(
         status: AuthStatus.error,
-        errorMessage: errorMessage.isNotEmpty ? errorMessage : 'Terjadi kesalahan saat login',
+        errorMessage: errorMessage.isNotEmpty
+            ? errorMessage
+            : 'Terjadi kesalahan saat login',
         isLoading: false,
       );
     }
@@ -61,55 +73,29 @@ class AuthController extends GetxController {
     required String password,
     required String confirmPassword,
     required String category,
-    required String institution,
+    required int institutionId,
     required bool agreeToTerms,
+    required String position,
   }) async {
     try {
-      _authState.value = _authState.value.copyWith(
-        status: AuthStatus.loading, 
-        isLoading: true
-      );
+      _authState.value = _authState.value
+          .copyWith(status: AuthStatus.loading, isLoading: true);
 
-      // Input validation
-      if (name.isEmpty || email.isEmpty || password.isEmpty) {
-        throw Exception('Semua field harus diisi');
-      }
-
-      if (!_isValidEmail(email)) {
-        throw Exception('Format email tidak valid');
-      }
-
-      if (password.length < 6) {
-        throw Exception('Password minimal 6 karakter');
-      }
-
-      if (password != confirmPassword) {
-        throw Exception('Konfirmasi password tidak cocok');
-      }
-
-      if (category.isEmpty) {
-        throw Exception('Kategori harus dipilih');
-      }
-
-      if (institution.isEmpty) {
-        throw Exception('Institusi harus dipilih');
-      }
-
-      if (!agreeToTerms) {
-        throw Exception('Anda harus menyetujui syarat dan ketentuan');
-      }
-
-      // Create user entity
-      final user = User(
-        id: DateTime.now().millisecondsSinceEpoch, // int instead of string
-        roleGroupId: 1, // Default role group ID, adjust as needed
+      final user = await _authRepository.register(
+        name: name,
         email: email,
-        profile: name, // Store name in profile field
-        createdAt: DateTime.now(),
+        password: password,
+        confirmPassword: confirmPassword,
+        category: category,
+        institutionId: institutionId,
+        agreeToTerms: agreeToTerms,
+        position: position,
       );
 
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
+      // Simpan token juga kalau register berhasil
+      if (user.token != null) {
+        await StorageUtils.saveToken(user.token!);
+      }
 
       _authState.value = _authState.value.copyWith(
         status: AuthStatus.authenticated,
@@ -118,12 +104,14 @@ class AuthController extends GetxController {
         errorMessage: null,
       );
     } catch (e) {
-      print('Register error caught: $e'); // Debug print
+      print('Register error caught: $e');
       final errorMessage = e.toString().replaceAll('Exception: ', '');
-      
+
       _authState.value = _authState.value.copyWith(
         status: AuthStatus.error,
-        errorMessage: errorMessage.isNotEmpty ? errorMessage : 'Terjadi kesalahan saat registrasi',
+        errorMessage: errorMessage.isNotEmpty
+            ? errorMessage
+            : 'Terjadi kesalahan saat registrasi',
         isLoading: false,
       );
     }
@@ -138,7 +126,8 @@ class AuthController extends GetxController {
     }
   }
 
-  void logout() {
+  Future<void> logout() async {
+    await StorageUtils.clearToken(); // ⬅️ hapus token
     _authState.value = const AuthState();
   }
 
