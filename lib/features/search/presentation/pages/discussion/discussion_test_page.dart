@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
-import '../../../../../data/models/discussion_item.dart';
+import 'package:schoolshare/models/models.dart';
 import '../../widgets/discussion_widgets/comment_card.dart';
 import '../../widgets/discussion_widgets/comment_input_widget.dart';
 
@@ -24,15 +24,15 @@ class _DiscussionTestPageState extends State<DiscussionTestPage> {
       CommentItem(
         id: '1',
         content: 'Ini adalah komentar pertama untuk testing tombol reply.',
-        author: 'Test User 1',
-        authorPhoto: 'assets/images/example-profile.jpg',
+        authorName: 'Test User 1',
+        authorAvatar: 'assets/images/example-profile.jpg',
         createdAt: DateTime.now().subtract(const Duration(minutes: 30)),
       ),
       CommentItem(
         id: '2',
         content: 'Ini adalah komentar kedua yang juga harus punya tombol reply.',
-        author: 'Test User 2',
-        authorPhoto: 'assets/images/example-profile-2.jpg',
+        authorName: 'Test User 2',
+        authorAvatar: 'assets/images/example-profile-2.jpg',
         createdAt: DateTime.now().subtract(const Duration(hours: 1)),
       ),
     ];
@@ -136,8 +136,8 @@ class _DiscussionTestPageState extends State<DiscussionTestPage> {
           CommentItem(
             id: DateTime.now().millisecondsSinceEpoch.toString(),
             content: content.trim(),
-            author: 'You',
-            authorPhoto: 'assets/images/example-profile.jpg',
+            authorName: 'You',
+            authorAvatar: 'assets/images/example-profile.jpg',
             createdAt: DateTime.now(),
           ),
         );
@@ -155,8 +155,8 @@ class _DiscussionTestPageState extends State<DiscussionTestPage> {
           final newReply = CommentItem(
             id: DateTime.now().millisecondsSinceEpoch.toString(),
             content: replyContent.trim(),
-            author: 'You',
-            authorPhoto: 'assets/images/example-profile.jpg',
+            authorName: 'You',
+            authorAvatar: 'assets/images/example-profile.jpg',
             createdAt: DateTime.now(),
           );
 
@@ -167,8 +167,8 @@ class _DiscussionTestPageState extends State<DiscussionTestPage> {
           final updatedParentComment = CommentItem(
             id: parentComment.id,
             content: parentComment.content,
-            author: parentComment.author,
-            authorPhoto: parentComment.authorPhoto,
+            authorName: parentComment.author,
+            authorAvatar: parentComment.authorPhoto,
             createdAt: parentComment.createdAt,
             replies: updatedReplies,
           );

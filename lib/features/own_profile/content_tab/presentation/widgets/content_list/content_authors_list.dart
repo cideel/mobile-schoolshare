@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/core/constants/color.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
 
@@ -19,47 +18,64 @@ class ContentAuthorsList extends StatelessWidget {
 
     return Column(
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ..._buildAuthorRows(authors),
-            if (authors.length > 4) _buildMoreAuthorsIndicator(authors.length),
-          ],
-        ),
+        _buildAuthorsSection(),
         SizedBox(height: mediaQuery.size.height * 0.015),
       ],
     );
   }
 
+  Widget _buildAuthorsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ..._buildAuthorRows(authors),
+        if (authors.length > 3) _buildMoreAuthorsIndicator(authors.length),
+      ],
+    );
+  }
+
   List<Widget> _buildAuthorRows(List<String> authors) {
-    final displayCount = authors.length > 4 ? 4 : authors.length;
+    final displayCount = authors.length > 3 ? 3 : authors.length;
     
     return List.generate(displayCount, (index) {
       final author = authors[index];
       return Container(
-        margin: const EdgeInsets.only(bottom: 8),
+        margin: EdgeInsets.only(bottom: mediaQuery.size.height * 0.01),
         child: Row(
           children: [
-            CircleAvatar(
-              radius: 14,
-              backgroundColor: AppColor.componentColor.withOpacity(0.1),
-              child: Text(
-                _getInitials(author),
-                style: AppTextStyle.caption.copyWith(
-                  fontSize: 9.sp,
-                  fontWeight: FontWeight.w600,
-                  color: AppColor.componentColor,
+            // Author Avatar
+            Container(
+              width: mediaQuery.size.width * 0.07,
+              height: mediaQuery.size.width * 0.07,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColor.componentColor,
+                border: Border.all(
+                  color: AppColor.componentColor.withValues(alpha: 0.8),
+                  width: 1,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  _getInitials(author),
+                  style: AppTextStyle.caption.copyWith(
+                    fontSize: (mediaQuery.size.width * 0.025).clamp(9.0, 11.0),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: mediaQuery.size.width * 0.025),
+            // Author Name
             Expanded(
               child: Text(
                 author,
                 style: AppTextStyle.caption.copyWith(
-                  fontSize: 12.sp,
+                  fontSize: (mediaQuery.size.width * 0.032).clamp(11.0, 13.0),
                   fontWeight: FontWeight.w500,
                   color: Colors.grey.shade700,
+                  height: 1.2,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -72,41 +88,83 @@ class ContentAuthorsList extends StatelessWidget {
   }
 
   Widget _buildMoreAuthorsIndicator(int totalAuthors) {
+    final remainingCount = totalAuthors - 3;
+    
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: EdgeInsets.only(bottom: mediaQuery.size.height * 0.01),
       child: Row(
         children: [
-          Container(
-            width: 28,
-            height: 28,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.grey.shade200,
-            ),
-            child: Center(
-              child: Text(
-                '[..]',
-                style: AppTextStyle.caption.copyWith(
-                  fontSize: 8.sp,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey.shade600,
-                ),
+          // Stacked Circle Avatar Indicator
+          GestureDetector(
+            onTap: () => _showAllAuthors(),
+            child: SizedBox(
+              width: mediaQuery.size.width * 0.1,
+              height: mediaQuery.size.width * 0.07,
+              child: Stack(
+                children: [
+                  // First background circle (furthest back)
+                  Positioned(
+                    left: 0,
+                    child: Container(
+                      width: mediaQuery.size.width * 0.07,
+                      height: mediaQuery.size.width * 0.07,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColor.componentColor.withValues(alpha: 0.7),
+                        border: Border.all(
+                          color: Colors.white,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Second circle with counter (front)
+                  Positioned(
+                    left: mediaQuery.size.width * 0.025,
+                    child: Container(
+                      width: mediaQuery.size.width * 0.07,
+                      height: mediaQuery.size.width * 0.07,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColor.componentColor,
+                        border: Border.all(
+                          color: Colors.white,
+                          width: 2,
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '+$remainingCount',
+                          style: AppTextStyle.caption.copyWith(
+                            fontSize: (mediaQuery.size.width * 0.02).clamp(7.0, 9.0),
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: mediaQuery.size.width * 0.02),
           Text(
-            '+${totalAuthors - 4} penulis lainnya',
+            'Lihat semua penulis',
             style: AppTextStyle.caption.copyWith(
-              fontSize: 12.sp,
+              color: AppColor.componentColor,
               fontWeight: FontWeight.w500,
-              color: Colors.grey.shade600,
-              fontStyle: FontStyle.italic,
+              fontSize: (mediaQuery.size.width * 0.03).clamp(11.0, 13.0),
             ),
           ),
         ],
       ),
     );
+  }
+
+  void _showAllAuthors() {
+    // This will be implemented when needed for showing all authors dialog
+    // For now, just a placeholder
   }
 
   String _getInitials(String name) {

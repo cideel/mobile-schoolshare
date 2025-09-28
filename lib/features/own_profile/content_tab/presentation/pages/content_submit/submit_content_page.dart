@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/core/constants/color.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
+import 'package:schoolshare/core/constants/content_constants.dart';
 import '../../widgets/content_submit/content_type_bottom_sheet.dart';
 import '../../widgets/content_submit/author_bottom_sheet.dart';
 import '../../widgets/content_submit/form_components.dart';
-import '../../../data/datasources/content_constants.dart';
 import '../../providers/content_utils_provider.dart';
 
 class SubmitContentPage extends StatefulWidget {
@@ -70,17 +70,19 @@ class _SubmitContentPageState extends State<SubmitContentPage> {
   // App Bar
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColor.componentColor,
+      foregroundColor: Colors.white,
       elevation: 0,
-      iconTheme: const IconThemeData(color: Colors.black),
+      iconTheme: const IconThemeData(color: Colors.white),
       title: Text(
         'Submit Konten Baru',
         style: AppTextStyle.cardTitle.copyWith(
           fontSize: 18.sp,
-          color: Colors.black,
+          color: Colors.white,
+          fontWeight: FontWeight.bold
         ),
       ),
-      centerTitle: true,
+      centerTitle: false,
     );
   }
 

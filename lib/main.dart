@@ -4,9 +4,14 @@ import 'package:get/get.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'app/routes/app_pages.dart';
+import 'bindings/service_bindings.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized(); 
+  
+  // Initialize services first
+  ServiceBindings().dependencies();
+  
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp, // Hanya potrait atas
   ]).then((_) {

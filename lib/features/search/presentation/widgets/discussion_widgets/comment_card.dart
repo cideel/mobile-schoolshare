@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
 import 'package:schoolshare/core/constants/color.dart';
-import '../../../../../data/models/discussion_item.dart';
+import 'package:schoolshare/models/models.dart';
 
 class CommentCard extends StatefulWidget {
   final CommentItem comment;

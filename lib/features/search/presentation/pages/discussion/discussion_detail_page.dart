@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
-import 'package:schoolshare/data/models/discussion_item.dart';
+import 'package:schoolshare/models/models.dart';
 import '../../widgets/discussion_widgets/discussion_header.dart';
 import '../../widgets/discussion_widgets/comment_card.dart';
 import '../../widgets/discussion_widgets/comment_input_widget.dart';
@@ -29,22 +29,22 @@ class _DiscussionDetailPageState extends State<DiscussionDetailPage> {
       CommentItem(
         id: '1',
         content: 'Pertanyaan yang sangat menarik! Menurut saya, optimasi performa motor vario sangat kencang',
-        author: 'Dr. Sarah Wilson',
-        authorPhoto: 'assets/images/example-profile-2.jpg',
+        authorName: 'Dr. Sarah Wilson',
+        authorAvatar: 'assets/images/example-profile-2.jpg',
         createdAt: DateTime.now().subtract(const Duration(minutes: 30)),
         replies: [
           CommentItem(
             id: '1_1',
             content: 'Saya setuju dengan Dr. Sarah. Pengalaman saya juga menunjukkan hal yang sama.',
-            author: 'Ahmad Fauzan',
-            authorPhoto: 'assets/images/example-profile.jpg',
+            authorName: 'Ahmad Fauzan',
+            authorAvatar: 'assets/images/example-profile.jpg',
             createdAt: DateTime.now().subtract(const Duration(minutes: 20)),
           ),
           CommentItem(
             id: '1_2',
             content: 'Terima kasih atas insightnya! Sangat membantu.',
-            author: 'Maria Santos',
-            authorPhoto: 'assets/images/example-profile-2.jpg',
+            authorName: 'Maria Santos',
+            authorAvatar: 'assets/images/example-profile-2.jpg',
             createdAt: DateTime.now().subtract(const Duration(minutes: 15)),
           ),
         ],
@@ -52,22 +52,22 @@ class _DiscussionDetailPageState extends State<DiscussionDetailPage> {
       CommentItem(
         id: '2',
         content: 'Saya setuju dengan pendapat di atas. Selain itu, penggunaan const knalpot racing juga sangat membantu mengurangi asap yang tidak perlu.',
-        author: 'Ahmad Fauzan',
-        authorPhoto: 'assets/images/example-profile.jpg',
+        authorName: 'Ahmad Fauzan',
+        authorAvatar: 'assets/images/example-profile.jpg',
         createdAt: DateTime.now().subtract(const Duration(hours: 1)),
       ),
       CommentItem(
         id: '3',
         content: 'Jangan lupa juga untuk memperhatikan penggunaan parfum dan deodoran untuk bau keringat yang panjang.',
-        author: 'Maria Santos',
-        authorPhoto: 'assets/images/example-profile-2.jpg',
+        authorName: 'Maria Santos',
+        authorAvatar: 'assets/images/example-profile-2.jpg',
         createdAt: DateTime.now().subtract(const Duration(hours: 2)),
         replies: [
           CommentItem(
             id: '3_1',
             content: 'Betul sekali! Tips yang sangat berguna.',
-            author: 'Dr. Sarah Wilson',
-            authorPhoto: 'assets/images/example-profile-2.jpg',
+            authorName: 'Dr. Sarah Wilson',
+            authorAvatar: 'assets/images/example-profile-2.jpg',
             createdAt: DateTime.now().subtract(const Duration(hours: 1, minutes: 30)),
           ),
         ],
@@ -153,8 +153,8 @@ class _DiscussionDetailPageState extends State<DiscussionDetailPage> {
           CommentItem(
             id: DateTime.now().millisecondsSinceEpoch.toString(),
             content: content.trim(),
-            author: 'Kamu', 
-            authorPhoto: 'assets/images/example-profile.jpg',
+            authorName: 'Kamu', 
+            authorAvatar: 'assets/images/example-profile.jpg',
             createdAt: DateTime.now(),
           ),
         );
@@ -170,8 +170,8 @@ class _DiscussionDetailPageState extends State<DiscussionDetailPage> {
         final newReply = CommentItem(
           id: DateTime.now().millisecondsSinceEpoch.toString(),
           content: replyContent.trim(),
-          author: 'Kamu', 
-          authorPhoto: 'assets/images/example-profile.jpg',
+          authorName: 'Kamu', 
+          authorAvatar: 'assets/images/example-profile.jpg',
           createdAt: DateTime.now(),
         );
 

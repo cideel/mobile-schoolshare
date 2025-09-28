@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
-import 'package:schoolshare/data/models/content_submission.dart';
+import 'package:schoolshare/models/models.dart';
 import 'package:schoolshare/features/other_profile/presentation/pages/header_other_profile_detail.dart';
 import 'package:schoolshare/features/search/presentation/widgets/people_widgets/person_card.dart';
 

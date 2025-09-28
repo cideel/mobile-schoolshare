@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
-import 'package:schoolshare/data/models/content_submission.dart';
+import 'package:schoolshare/models/models.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/custom_tab_bar.dart';
 import 'content_tab/content_tab.dart';

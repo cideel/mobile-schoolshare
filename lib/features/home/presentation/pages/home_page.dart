@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:schoolshare/features/detail_content/presentation/pages/detail_content.dart';
-import '../../controllers/home_controller.dart';
+import 'package:schoolshare/controllers/controllers.dart';
+import '../widgets/content_ontap.dart';
 import '../widgets/home_app_bar.dart';
-import '../widgets/publication_item.dart';
 import '../widgets/loading_indicator.dart';
 
 class HomePage extends GetView<HomeController> {
@@ -12,6 +11,8 @@ class HomePage extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
+    final navigationController = Get.find<NavigationController>();
+    
     return Scaffold(
       backgroundColor: Colors.white, 
       body: RefreshIndicator(
@@ -22,13 +23,13 @@ class HomePage extends GetView<HomeController> {
             
             // Konten list
             Obx(() {
-              if (controller.isLoading && controller.publications.isEmpty) {
+              if (controller.isLoading && controller.contents.isEmpty) {
                 return const SliverToBoxAdapter(
                   child: LoadingIndicator(),
                 );
               }
               
-              if (controller.publications.isEmpty) {
+              if (controller.contents.isEmpty) {
                 return SliverToBoxAdapter(
                   child: Center(
                     child: Padding(
@@ -57,20 +58,18 @@ class HomePage extends GetView<HomeController> {
               return SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
-                    final publication = controller.publications[index];
+                    final content = controller.contents[index];
                     return PublicationItem(
-                      publication: publication,
+                      content: content,
+                      index: index,
                       onTap: () {
-                        PersistentNavBarNavigator.pushNewScreen(
-                          context,
-                          screen: const DetailContent(),
-                          withNavBar: true, // IMPORTANT: This keeps the navbar
-                          pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                        navigationController.navigateToDetail(
+                          const DetailContent(),
                         );
                       },
                     );
                   },
-                  childCount: controller.publications.length,
+                  childCount: controller.contents.length,
                 ),
               );
             }),

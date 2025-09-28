@@ -4,13 +4,11 @@ import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/core/constants/color.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
-import 'package:schoolshare/features/auth/domain/entities/auth_state.dart';
 import 'package:schoolshare/features/auth/presentation/pages/add_institution.dart';
-import 'package:schoolshare/features/auth/controllers/auth_controller.dart';
+import 'package:schoolshare/controllers/auth_controller.dart';
 import 'package:schoolshare/features/auth/presentation/widgets/custom_dropdown.dart' as dropdown;
 import 'package:schoolshare/features/auth/presentation/widgets/custom_search_institution.dart';
 import 'package:schoolshare/features/auth/presentation/widgets/custom_text_field.dart' as custom;
-import 'package:schoolshare/core/widgets/navbart.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -112,37 +110,6 @@ class _RegisterState extends State<Register> {
         ),
         margin: EdgeInsets.all(16.w),
         duration: const Duration(seconds: 4),
-      ),
-    );
-  }
-
-  void _showSuccessSnackBar(BuildContext context, String userName) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(
-              Icons.check_circle,
-              color: Colors.white,
-              size: 20.sp,
-            ),
-            SizedBox(width: 8.w),
-            Text(
-              'Selamat datang, $userName!',
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.green[600],
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.r),
-        ),
-        margin: EdgeInsets.all(16.w),
-        duration: const Duration(seconds: 2),
       ),
     );
   }

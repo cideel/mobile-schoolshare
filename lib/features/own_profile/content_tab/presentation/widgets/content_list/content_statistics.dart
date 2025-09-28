@@ -21,11 +21,6 @@ class ContentStatistics extends StatelessWidget {
             _buildStatItem(Icons.visibility_outlined, '${content['dibaca'] ?? 0}', 'Dibaca'),
             const SizedBox(width: 16),
             _buildStatItem(Icons.download_outlined, '${content['diunduh'] ?? 0}', 'Diunduh'),
-            const Spacer(),
-            Text(
-              content['publishedDate'] ?? 'Tanggal tidak tersedia',
-              style: AppTextStyle.dateText.copyWith(fontSize: 12.sp),
-            ),
           ],
         ),
         SizedBox(height: mediaQuery.size.height * 0.01),

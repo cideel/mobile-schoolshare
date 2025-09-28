@@ -4,6 +4,7 @@ import '../../features/home/bindings/home_binding.dart';
 import '../../features/auth/presentation/pages/login.dart';
 import '../../features/auth/presentation/pages/register.dart';
 import '../../features/auth/presentation/pages/add_institution.dart';
+import '../../features/notification/pages/notif.dart';
 import '../../core/widgets/splash_screen.dart';
 import '../../core/widgets/navbart.dart';
 import 'app_routes.dart';
@@ -38,6 +39,10 @@ class AppPages {
         AuthBinding(),
         HomeBinding(),
       ],
+    ),
+    GetPage(
+      name: Routes.NOTIFICATION,
+      page: () => const NotifPage(),
     ),
   ];
 }

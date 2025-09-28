@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:schoolshare/core/constants/color.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
 import '../../widgets/discussion_widgets/discussion_form_field.dart';
 import '../../widgets/discussion_widgets/popular_topics_widget.dart';
@@ -47,14 +48,15 @@ class _CreateDiscussionPageState extends State<CreateDiscussionPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColor.componentColor,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: Colors.white),
         title: Text(
           'Buat Diskusi Baru',
           style: AppTextStyle.cardTitle.copyWith(
             fontSize: 18.sp,
-            color: Colors.black,
+            color: Colors.white,
+            fontWeight: FontWeight.bold
           ),
         ),
         centerTitle: true,

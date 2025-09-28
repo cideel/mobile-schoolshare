@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/core/constants/color.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
-import '../../../../../data/models/discussion_item.dart';
+import 'package:schoolshare/models/models.dart';
 
 class DiscussionHeader extends StatelessWidget {
   final DiscussionItem discussion;

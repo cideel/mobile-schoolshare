@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/core/constants/color.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
 import '../widgets/custom_text_field.dart' as custom;
-import '../../controllers/auth_controller.dart';
+import 'package:schoolshare/controllers/auth_controller.dart';
 import 'register.dart';
 
 class LoginPage extends GetView<AuthController> {
@@ -52,8 +52,8 @@ class _LoginPageContentState extends State<_LoginPageContent> {
     _hasNavigated = false;
 
     authController.login(
-      email: _emailController.text.trim(),
-      password: _passwordController.text,
+      _emailController.text.trim(),
+      _passwordController.text,
     );
   }
 

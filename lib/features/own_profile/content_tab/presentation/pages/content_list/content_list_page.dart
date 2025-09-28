@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
-import '../../../../../../data/datasources/home_mock_data.dart';
+import 'package:schoolshare/models/models.dart';
 import '../../../../../detail_content/presentation/pages/detail_content.dart';
 import '../content_submit/submit_content_page.dart';
+import '../content_edit/edit_content_page.dart';
 import '../../widgets/content_list/content_list_view.dart';
 import '../../widgets/empty_state/empty_state_view.dart';
 
@@ -14,8 +15,8 @@ class ContentListPage extends StatelessWidget {
     final mq = MediaQuery.of(context);
     final horizontalPadding = mq.size.width * 0.05;
     
-    // Get sample publications from HomeMockData
-    final submittedContent = HomeMockData.publications.take(3).toList(); // Show first 3 as user's content
+    // Use Publication sample data
+    final submittedContent = Publication.sampleData;
     
     // Toggle this to show empty state or content list
     final bool hasContent = submittedContent.isNotEmpty;
@@ -58,6 +59,27 @@ class ContentListPage extends StatelessWidget {
                   } catch (e) {
                     print('Error navigating to DetailContent: $e');
                   }
+                },
+                onContentEdit: (publication) {
+                  // Navigate to edit content page
+                  print('Edit content: ${publication.title}');
+                  try {
+                    PersistentNavBarNavigator.pushNewScreen(
+                      context,
+                      screen: EditContentPage(publication: publication),
+                      withNavBar: true, 
+                      pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                    );
+                    print('Navigation to EditContentPage initiated successfully');
+                  } catch (e) {
+                    print('Error navigating to EditContentPage: $e');
+                  }
+                },
+                onContentDelete: (publication) {
+                  // Handle delete content
+                  print('Delete content: ${publication.title}');
+                  // Here you would typically call a service to delete the content
+                  // For now, just show a success message
                 },
               )
             : EmptyStateView(

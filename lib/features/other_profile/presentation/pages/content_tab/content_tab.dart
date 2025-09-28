@@ -14,7 +14,7 @@ class ContentTab extends StatelessWidget {
       {
         'title': 'Artificial Intelligence in Education',
         'type': 'Artikel',
-        'authors': ['Dr. Jane Smith'],
+        'authors': ['Dr. Jane Smith', 'Prof. Alice Johnson', 'Dr. Robert Brown'],
         'views': 150,
         'likes': 25,
         'date': '2023-10-15',
@@ -22,10 +22,18 @@ class ContentTab extends StatelessWidget {
       {
         'title': 'Machine Learning Research',
         'type': 'Jurnal',
-        'authors': ['Dr. John Doe', 'Prof. Alice Johnson'],
+        'authors': ['Dr. John Doe', 'Prof. Alice Johnson', 'Dr. Michael Wilson', 'Prof. Sarah Davis', 'Dr. Emily Chen'],
         'views': 320,
         'likes': 48,
         'date': '2023-09-22',
+      },
+      {
+        'title': 'Data Science Applications in Healthcare',
+        'type': 'Paper',
+        'authors': ['Dr. Lisa Anderson'],
+        'views': 89,
+        'likes': 12,
+        'date': '2023-08-10',
       },
     ];
 

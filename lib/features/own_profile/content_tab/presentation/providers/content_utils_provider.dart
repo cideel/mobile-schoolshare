@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../data/datasources/content_constants.dart';
+import 'package:schoolshare/core/constants/content_constants.dart';
 
 // Content validation utilities
 class ContentValidators {
@@ -54,8 +54,16 @@ class ContentHelpers {
     if (contentType == null || !ContentData.contentTypeConfig.containsKey(contentType)) {
       return Colors.grey;
     }
-    final colorInt = ContentData.contentTypeConfig[contentType]!['color'] as int;
-    return Color(colorInt);
+    final colorValue = ContentData.contentTypeConfig[contentType]!['color'];
+    
+    // Handle both Color object and int format
+    if (colorValue is Color) {
+      return colorValue;
+    } else if (colorValue is int) {
+      return Color(colorValue);
+    }
+    
+    return Colors.grey;
   }
 
   static IconData getContentTypeIcon(String? contentType) {
@@ -65,22 +73,34 @@ class ContentHelpers {
     
     final iconName = ContentData.contentTypeConfig[contentType]!['icon'] as String;
     switch (iconName) {
-      case 'article':
-        return Icons.article;
-      case 'book':
-        return Icons.book;
+      case 'gavel':
+        return Icons.gavel;
       case 'menu_book':
         return Icons.menu_book;
-      case 'school':
-        return Icons.school;
+      case 'assignment':
+        return Icons.assignment;
+      case 'assignment_ind':
+        return Icons.assignment_ind;
+      case 'science':
+        return Icons.science;
+      case 'lightbulb':
+        return Icons.lightbulb;
       case 'psychology':
         return Icons.psychology;
-      case 'workspace_premium':
-        return Icons.workspace_premium;
-      case 'description':
-        return Icons.description;
+      case 'model_training':
+        return Icons.model_training;
+      case 'videocam':
+        return Icons.videocam;
       case 'slideshow':
         return Icons.slideshow;
+      case 'book':
+        return Icons.book;
+      case 'article':
+        return Icons.article;
+      case 'image':
+        return Icons.image;
+      case 'description':
+        return Icons.description;
       default:
         return Icons.description;
     }
@@ -91,6 +111,19 @@ class ContentHelpers {
       return 'Pilih Tipe';
     }
     return ContentData.contentTypeConfig[contentType]!['label'] as String;
+  }
+
+  static List<Map<String, String>> getAvailableAuthors() {
+    return [
+      {'name': 'Dr. Ananda Wijaya', 'institution': 'Universitas Indonesia'},
+      {'name': 'Prof. Sari Indrawati', 'institution': 'Institut Teknologi Bandung'},
+      {'name': 'Dr. Budi Santoso', 'institution': 'Universitas Gadjah Mada'},
+      {'name': 'Dr. Maya Sari', 'institution': 'Universitas Brawijaya'},
+      {'name': 'Prof. Ahmad Rahman', 'institution': 'Universitas Airlangga'},
+      {'name': 'Dr. Rina Kusuma', 'institution': 'Institut Teknologi Sepuluh Nopember'},
+      {'name': 'Dr. Hadi Pranoto', 'institution': 'Universitas Padjadjaran'},
+      {'name': 'Prof. Lisa Maharani', 'institution': 'Universitas Diponegoro'},
+    ];
   }
 
   static void showSnackBar(BuildContext context, String message, {bool isError = false}) {

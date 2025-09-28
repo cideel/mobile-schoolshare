@@ -1,60 +1,67 @@
-// lib/data/models/publication.dart
+// Compatibility layer for legacy Publication model
+// TODO: Migrate UI components to use Content model from MVC
+
+import 'package:schoolshare/models/models.dart';
+
 class Publication {
   final String id;
   final String title;
   final String description;
-  final String type;
-  final List<String> authors;
-  final String imageUrl;
-  final DateTime publishedDate;
-  final int readCount;
-  final int likeCount;
+  final String authorName;
   final String category;
-  final String institutionName;
+  final int viewCount;
+  final int downloadCount;
+  final DateTime publishedDate;
+  final List<String> tags;
+  final String? thumbnailUrl;
+  final bool isFree;
 
-  Publication({
+  const Publication({
     required this.id,
     required this.title,
     required this.description,
-    required this.type,
-    required this.authors,
-    required this.imageUrl,
-    required this.publishedDate,
-    required this.readCount,
-    required this.likeCount,
+    required this.authorName,
     required this.category,
-    required this.institutionName,
+    this.viewCount = 0,
+    this.downloadCount = 0,
+    required this.publishedDate,
+    this.tags = const [],
+    this.thumbnailUrl,
+    this.isFree = true,
   });
 
-  factory Publication.fromJson(Map<String, dynamic> json) {
+  // Factory constructor from Content model
+  factory Publication.fromContent(Content content) {
     return Publication(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      description: json['description'] as String,
-      type: json['type'] as String,
-      authors: List<String>.from(json['authors'] as List),
-      imageUrl: json['imageUrl'] as String,
-      publishedDate: DateTime.parse(json['publishedDate'] as String),
-      readCount: json['readCount'] as int,
-      likeCount: json['likeCount'] as int,
-      category: json['category'] as String,
-      institutionName: json['institutionName'] as String,
+      id: content.id,
+      title: content.title,
+      description: content.description,
+      authorName: content.authors.isNotEmpty ? content.authors.first : 'Unknown',
+      category: content.type,
+      viewCount: content.viewCount,
+      downloadCount: content.downloadCount,
+      publishedDate: content.createdAt,
+      tags: content.tags,
+      thumbnailUrl: content.thumbnailUrl,
+      isFree: content.price == null || content.price == 0,
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'title': title,
-      'description': description,
-      'type': type,
-      'authors': authors,
-      'imageUrl': imageUrl,
-      'publishedDate': publishedDate.toIso8601String(),
-      'readCount': readCount,
-      'likeCount': likeCount,
-      'category': category,
-      'institutionName': institutionName,
-    };
+  // Convert to Content model
+  Content toContent() {
+    return Content(
+      id: id,
+      title: title,
+      description: description,
+      type: category,
+      authors: [authorName],
+      authorId: 'legacy_author',
+      viewCount: viewCount,
+      downloadCount: downloadCount,
+      createdAt: publishedDate,
+      tags: tags,
+      thumbnailUrl: thumbnailUrl,
+      price: isFree ? null : 0.0,
+    );
   }
 }

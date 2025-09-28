@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
+import 'package:get/get.dart';
 import 'package:schoolshare/core/constants/color.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
-import 'package:schoolshare/features/search/presentation/pages/main_search/search_page.dart';
+import 'package:schoolshare/core/controllers/navigation_controller.dart';
 
 class HomeAppBar extends StatelessWidget {
   const HomeAppBar({super.key});
@@ -10,6 +10,7 @@ class HomeAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
+    final navigationController = Get.find<NavigationController>();
 
     return SliverAppBar(
       pinned: true,
@@ -27,12 +28,7 @@ class HomeAppBar extends StatelessWidget {
               Expanded(
                 child: GestureDetector(
                   onTap: () {
-                    PersistentNavBarNavigator.pushNewScreen(
-                      context,
-                      screen: const SearchPage(),
-                      withNavBar: true, // IMPORTANT: This keeps the navbar
-                      pageTransitionAnimation: PageTransitionAnimation.cupertino,
-                    );
+                    navigationController.navigateToSearch();
                   },
                   child: Container(
                     height: mq.size.height * 0.05,
@@ -77,7 +73,9 @@ class HomeAppBar extends StatelessWidget {
                   icon: const Icon(Icons.bookmark_border_rounded),
                   iconSize: mq.size.width * 0.075, // Responsive icon size
                   color: Colors.white,
-                  onPressed: () => print("Bookmark diklik!"),
+                  onPressed: () {
+                    navigationController.navigateToBookmark();
+                  },
                 ),
               ),
             ],

@@ -1,54 +1,59 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:schoolshare/core/constants/color.dart';
-
-import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
+import 'package:schoolshare/core/controllers/navigation_controller.dart';
 import 'package:schoolshare/features/home/presentation/pages/home_page.dart';
-import 'package:schoolshare/core/widgets/notif.dart';
+import 'package:schoolshare/features/notification/pages/notif.dart';
 import 'package:schoolshare/features/own_profile/profile.dart';
 
-
 class NavBarScreen extends StatelessWidget {
-  final PersistentTabController _controller = PersistentTabController(initialIndex: 0);
+  final NavigationController navigationController = Get.put(NavigationController());
 
-  List<Widget> _buildScreens() {
-    return [
-      HomePage(),
-      Notif(),
-      ProfilePage(),
-    ];
-  }
+  NavBarScreen({Key? key}) : super(key: key);
 
-  List<PersistentBottomNavBarItem> _navBarsItems() {
-    return [
-      PersistentBottomNavBarItem(
-        icon: Icon(Icons.home_outlined),
-        title: "Beranda",
-        activeColorPrimary: AppColor.componentColor,
-        inactiveColorPrimary: Colors.grey,
-      ),
-      PersistentBottomNavBarItem(
-        icon: Icon(Icons.notifications_outlined),
-        title: "Notifikasi",
-        activeColorPrimary: AppColor.componentColor,
-        inactiveColorPrimary: Colors.grey,
-      ),
-      PersistentBottomNavBarItem(
-        icon: Icon(Icons.person_outline_sharp),
-        title: "Profil",
-        activeColorPrimary: AppColor.componentColor,
-        inactiveColorPrimary: Colors.grey,
-      ),
-    ];
-  }
+  final List<Widget> _pages = [
+    const HomePage(),
+    const NotifPage(),
+    const ProfilePage(),
+  ];
+
+  final List<BottomNavigationBarItem> _navItems = [
+    const BottomNavigationBarItem(
+      icon: Icon(Icons.home_outlined),
+      activeIcon: Icon(Icons.home),
+      label: "Beranda",
+    ),
+    const BottomNavigationBarItem(
+      icon: Icon(Icons.notifications_outlined),
+      activeIcon: Icon(Icons.notifications),
+      label: "Notifikasi",
+    ),
+    const BottomNavigationBarItem(
+      icon: Icon(Icons.person_outline_sharp),
+      activeIcon: Icon(Icons.person),
+      label: "Profil",
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return PersistentTabView(
-      context,
-      controller: _controller,
-      screens: _buildScreens(),
-      items: _navBarsItems(),
-      navBarStyle: NavBarStyle.style3, // Anda bisa mengganti dengan gaya lain.
+    return Scaffold(
+      body: Obx(() => IndexedStack(
+        index: navigationController.currentIndex.value,
+        children: _pages,
+      )),
+      bottomNavigationBar: Obx(() => BottomNavigationBar(
+        currentIndex: navigationController.currentIndex.value,
+        onTap: navigationController.changePage,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: AppColor.componentColor,
+        unselectedItemColor: Colors.grey,
+        selectedFontSize: 12,
+        unselectedFontSize: 12,
+        elevation: 8,
+        backgroundColor: Colors.white,
+        items: _navItems,
+      )),
     );
   }
 }

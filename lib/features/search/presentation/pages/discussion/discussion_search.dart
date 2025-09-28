@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
-import '../../../../../data/models/discussion_item.dart';
+import 'package:schoolshare/models/models.dart';
 import 'discussion_detail_page.dart';
 import 'create_discussion_page.dart';
 import '../../widgets/discussion_widgets/discussion_card.dart';
@@ -16,41 +16,45 @@ class DiscussionSearchResult extends StatelessWidget {
     final List<DiscussionItem> discussions = [
       DiscussionItem(
         id: '1',
-        topic: 'Teknologi',
         title: 'Bagaimana cara mengoptimalkan performa aplikasi Flutter?',
-        author: 'Johan Liebert',
-        authorPhoto: 'assets/images/example-profile.jpg',
+        content: 'Saya sedang mengembangkan aplikasi Flutter dan mengalami masalah performa...',
+        authorName: 'Johan Liebert',
         createdAt: DateTime.now().subtract(const Duration(hours: 2)),
+        topic: 'Teknologi',
+        authorAvatar: 'assets/images/example-profile.jpg',
         commentCount: 15,
         description: 'Saya sedang mengembangkan aplikasi Flutter dan mengalami masalah performa...',
       ),
       DiscussionItem(
         id: '2',
-        topic: 'Pendidikan',
         title: 'Metode pembelajaran yang efektif untuk era digital',
-        author: 'Ratandi Ahmad Fauzan',
-        authorPhoto: 'assets/images/example-profile-2.jpg',
+        content: 'Pendidikan di era digital memerlukan pendekatan yang berbeda...',
+        authorName: 'Prof. Sarah Johnson',
         createdAt: DateTime.now().subtract(const Duration(days: 1)),
+        topic: 'Pendidikan',
+        authorAvatar: 'assets/images/example-profile-2.jpg',
         commentCount: 8,
         description: 'Mari diskusikan tentang metode pembelajaran terbaru yang sesuai dengan perkembangan teknologi...',
       ),
       DiscussionItem(
         id: '3',
-        topic: 'Penelitian',
         title: 'Tips menulis paper penelitian yang baik',
-        author: 'Anggito Setoadji',
-        authorPhoto: 'assets/images/example-profile.jpg',
+        content: 'Sharing pengalaman dalam menulis paper penelitian yang berkualitas...',
+        authorName: 'Anggito Setoadji',
         createdAt: DateTime.now().subtract(const Duration(days: 3)),
+        topic: 'Penelitian',
+        authorAvatar: 'assets/images/example-profile.jpg',
         commentCount: 23,
         description: 'Sharing pengalaman dalam menulis paper penelitian yang berkualitas...',
       ),
       DiscussionItem(
         id: '4',
-        topic: 'AI & Machine Learning',
         title: 'Implementasi ChatGPT dalam pendidikan',
-        author: 'Dr. Sarah Wilson',
-        authorPhoto: 'assets/images/example-profile-2.jpg',
+        content: 'Bagaimana cara mengintegrasikan AI dalam proses belajar mengajar yang efektif...',
+        authorName: 'Dr. Sarah Wilson',
         createdAt: DateTime.now().subtract(const Duration(days: 5)),
+        topic: 'AI & Machine Learning',
+        authorAvatar: 'assets/images/example-profile-2.jpg',
         commentCount: 42,
         description: 'Bagaimana cara mengintegrasikan AI dalam proses belajar mengajar yang efektif...',
       ),

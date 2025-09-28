@@ -20,7 +20,7 @@ class AuthorName extends StatelessWidget {
         SizedBox(width: mq.size.width * 0.02), // Responsive spacing
         Text(
           name,
-          style: AppTextStyle.authorName.copyWith(fontSize: 14.sp),
+          style: AppTextStyle.authorName.copyWith(fontSize: 16.sp),
         )
       ],
     );

@@ -1,5 +1,5 @@
 // lib/features/home/domain/repositories/home_repository.dart
-import '../../../../data/models/publication.dart';
+import 'package:schoolshare/models/models.dart';
 
 abstract class HomeRepository {
   Future<List<Publication>> getPublications();
