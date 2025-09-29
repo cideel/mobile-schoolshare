@@ -18,10 +18,14 @@ class AuthorName extends StatelessWidget {
           backgroundImage: AssetImage(img),
         ),
         SizedBox(width: mq.size.width * 0.02), // Responsive spacing
-        Text(
-          name,
-          style: AppTextStyle.authorName.copyWith(fontSize: 16.sp),
-        )
+        Expanded(
+          child: Text(
+            name,
+            style: AppTextStyle.authorName.copyWith(fontSize: 16.sp),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
       ],
     );
   }

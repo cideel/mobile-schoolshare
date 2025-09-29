@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/core/constants/color.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
-import 'package:schoolshare/features/home/presentation/widgets/author_name.dart'; // gunakan ulang komponen AuthorName
+import 'package:schoolshare/features/home/presentation/widgets/author_name.dart';
+import '../../../../models/content.dart';
 
 class DetailInfoCard extends StatelessWidget {
-  const DetailInfoCard({super.key});
+  final Content? content;
+  
+  const DetailInfoCard({super.key, this.content});
 
   @override
   Widget build(BuildContext context) {
@@ -21,57 +24,66 @@ class DetailInfoCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  _label("Publikasi", true),
+                  _label(content?.type ?? "Publikasi", true),
                   SizedBox(width: mq.size.width * 0.02), // Responsive spacing
-                  _label("Dokumen tersedia", false),
+                  _label(content?.type == 'Video' ? "Video tersedia" : "Dokumen tersedia", false),
                 ],
               ),
               SizedBox(height: mq.size.height * 0.012), // Responsive spacing
               Text(
-                "Proximate Analysis of Merang Mushrooms (Volvariella volvacea) Cultivated on Corncob and Rice Bran Media",
+                content?.title ?? "Judul tidak tersedia",
                 style: AppTextStyle.titleLarge.copyWith(fontSize: 18.sp),
               ),
               SizedBox(height: mq.size.height * 0.006), // Responsive spacing
-              Text("12 Agustus 2023", style: AppTextStyle.dateText),
+              Text(content?.formattedDate ?? "Tanggal tidak tersedia", style: AppTextStyle.dateText),
               SizedBox(height: mq.size.height * 0.012), // Responsive spacing
-              const AuthorName(
-                img: 'assets/images/example-profile.jpg',
-                name: "John Snow",
-              ),
-              SizedBox(height: mq.size.height * 0.006), // Responsive spacing
-              const AuthorName(
-                img: 'assets/images/example-profile-2.jpg',
-                name: "Ratandi Ahmad Fauzan",
-              ),
+              if (content?.authors != null && content!.authors.isNotEmpty) ...[
+                for (String author in content!.authors.take(2)) // Show max 2 authors
+                  Padding(
+                    padding: EdgeInsets.only(bottom: mq.size.height * 0.006),
+                    child: AuthorName(
+                      img: 'assets/images/example-profile.jpg',
+                      name: author,
+                    ),
+                  ),
+              ] else ...[
+                const AuthorName(
+                  img: 'assets/images/example-profile.jpg',
+                  name: "Penulis tidak tersedia",
+                ),
+              ],
               Divider(height: mq.size.height * 0.036), // Responsive spacing
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColor.componentColor,
-                        minimumSize: Size(mq.size.width * 0.4, 45),
+              // Hide download/read buttons for Video type
+              if (content?.type != 'Video') ...[
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColor.componentColor,
+                          minimumSize: Size(mq.size.width * 0.4, 45),
+                        ),
+                        onPressed: () {},
+                        child: Text("Unduh dokumen", style: AppTextStyle.badge),
                       ),
-                      onPressed: () {},
-                      child: Text("Unduh dokumen", style: AppTextStyle.badge),
                     ),
-                  ),
-                  SizedBox(width: mq.size.width * 0.025), // Responsive spacing
-                  Expanded(
-                    child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: AppColor.componentColor),
-                        minimumSize: Size(mq.size.width * 0.4, 45),
+                    SizedBox(width: mq.size.width * 0.025), // Responsive spacing
+                    Expanded(
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: AppColor.componentColor),
+                          minimumSize: Size(mq.size.width * 0.4, 45),
+                        ),
+                        onPressed: () {},
+                        child: Text("Baca dokumen", style: AppTextStyle.caption.copyWith(
+                          color: AppColor.componentColor,
+                        )),
                       ),
-                      onPressed: () {},
-                      child: Text("Baca dokumen", style: AppTextStyle.caption.copyWith(
-                        color: AppColor.componentColor,
-                      )),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: mq.size.height * 0.012), // Responsive spacing
+                  ],
+                ),
+                SizedBox(height: mq.size.height * 0.012), // Responsive spacing
+              ],
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

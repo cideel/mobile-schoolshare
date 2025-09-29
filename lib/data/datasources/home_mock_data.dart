@@ -164,6 +164,48 @@ class HomeMockData {
         readCount: 67,
         likeCount: 9,
       ),
+      Publication(
+        id: 'video_1',
+        title: 'Tutorial Implementasi Kurikulum Merdeka di Sekolah Dasar - Video Pembelajaran',
+        description: 'Video tutorial lengkap tentang implementasi kurikulum merdeka dengan contoh praktis.',
+        authorName: 'Dr. Putri Handayani',
+        category: 'Video',
+        viewCount: 1250,
+        downloadCount: 0, // No download for videos
+        publishedDate: DateTime.now().subtract(Duration(days: 7)),
+        tags: ['video', 'kurikulum merdeka', 'sekolah dasar'],
+        authors: [
+          'Dr. Putri Handayani',
+          'Prof. Agus Salim',
+          'Dr. Dewi Sartika',
+        ],
+        institutionName: 'Kementerian Pendidikan',
+        type: 'Video',
+        readCount: 1250,
+        likeCount: 87,
+        fileUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', // Example YouTube URL
+      ),
+      Publication(
+        id: 'video_2',
+        title: 'Strategi Pembelajaran Blended Learning untuk Era Digital - Webinar',
+        description: 'Webinar tentang strategi pembelajaran campuran yang efektif di era digital.',
+        authorName: 'Prof. Dr. Ahmad Susanto',
+        category: 'Video',
+        viewCount: 890,
+        downloadCount: 0,
+        publishedDate: DateTime.now().subtract(Duration(days: 14)),
+        tags: ['video', 'blended learning', 'webinar'],
+        authors: [
+          'Prof. Dr. Ahmad Susanto',
+          'Dr. Lisa Permata',
+          'Prof. Bambang Sutrisno',
+        ],
+        institutionName: 'Universitas Negeri Jakarta',
+        type: 'Video',
+        readCount: 890,
+        likeCount: 65,
+        fileUrl: 'https://youtu.be/oHg5SJYRHA0', // Example YouTube short URL
+      ),
     ];
   }
 }

@@ -15,6 +15,7 @@ class Publication {
   final List<String> tags;
   final String? thumbnailUrl;
   final bool isFree;
+  final String? fileUrl; // Added for video URLs
   
   // Additional properties for UI compatibility
   final List<String> authors;
@@ -35,6 +36,7 @@ class Publication {
     this.tags = const [],
     this.thumbnailUrl,
     this.isFree = true,
+    this.fileUrl, // Added parameter
     this.authors = const [],
     this.institutionName = '',
     this.type = '',
@@ -56,6 +58,7 @@ class Publication {
       tags: content.tags,
       thumbnailUrl: content.thumbnailUrl,
       isFree: content.price == null || content.price == 0,
+      fileUrl: content.fileUrl, // Added mapping
       authors: content.authors,
       institutionName: content.institutionName,
       type: content.type,
@@ -78,6 +81,7 @@ class Publication {
       createdAt: publishedDate,
       tags: tags,
       thumbnailUrl: thumbnailUrl,
+      fileUrl: fileUrl, // Added mapping
       price: isFree ? 0.0 : null,
     );
   }

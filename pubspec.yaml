@@ -33,6 +33,8 @@ dependencies:
   flutter_screenutil: ^5.9.3
   get: ^4.6.6
   persistent_bottom_nav_bar: ^6.2.1
+  webview_flutter: ^4.4.2
+  url_launcher: ^6.2.2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

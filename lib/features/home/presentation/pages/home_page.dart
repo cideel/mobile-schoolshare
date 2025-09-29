@@ -64,7 +64,7 @@ class HomePage extends GetView<HomeController> {
                       index: index,
                       onTap: () {
                         navigationController.navigateToDetail(
-                          const DetailContent(),
+                          DetailContent(content: content),
                         );
                       },
                     );

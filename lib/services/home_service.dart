@@ -22,6 +22,7 @@ class HomeService extends GetxService {
     'Evaluasi',
     'Modul',
     'Panduan',
+    'Video',
   ];
 
   final List<String> _popularTopics = [
@@ -187,6 +188,83 @@ class HomeService extends GetxService {
         createdAt: DateTime.now().subtract(Duration(days: 3)),
         isPublished: true,
         tags: ['worksheet', 'ai', 'literasi', 'numerasi'],
+      ),
+      Content(
+        id: 'video_1',
+        title: 'Tutorial Implementasi Kurikulum Merdeka di Sekolah Dasar - Video Pembelajaran',
+        description: 'Video tutorial lengkap tentang implementasi kurikulum merdeka dengan contoh praktis dan best practices dari sekolah-sekolah terdepan.',
+        type: 'Video',
+        authors: [
+          'Dr. Putri Handayani',
+          'Prof. Agus Salim',
+          'Dr. Dewi Sartika',
+        ],
+        authorId: 'video_author_1',
+        institutionName: 'Kementerian Pendidikan',
+        viewCount: 1250,
+        downloadCount: 0, // No download for videos
+        recommendationCount: 87,
+        createdAt: DateTime.now().subtract(Duration(days: 7)),
+        isPublished: true,
+        tags: ['video', 'kurikulum merdeka', 'sekolah dasar', 'tutorial'],
+        fileUrl: 'https://www.youtube.com/watch?v=yYDmaexVHic&list=RDyYDmaexVHic&start_radio=1', // PSY - GANGNAM STYLE (공식뮤직비디오)
+      ),
+      Content(
+        id: 'video_2',
+        title: 'Strategi Pembelajaran Blended Learning untuk Era Digital - Webinar',
+        description: 'Webinar tentang strategi pembelajaran campuran yang efektif di era digital dengan teknologi terdepan.',
+        type: 'Video',
+        authors: [
+          'Prof. Dr. Ahmad Susanto',
+          'Dr. Lisa Permata',
+        ],
+        authorId: 'video_author_2',
+        institutionName: 'Universitas Negeri Jakarta',
+        viewCount: 890,
+        downloadCount: 0,
+        recommendationCount: 65,
+        createdAt: DateTime.now().subtract(Duration(days: 14)),
+        isPublished: true,
+        tags: ['video', 'blended learning', 'webinar', 'digital'],
+        fileUrl: 'https://www.youtube.com/watch?v=E5yFcdPAGv0&list=RDE5yFcdPAGv0&start_radio=1', // Luis Fonsi - Despacito ft. Daddy Yankee
+      ),
+      Content(
+        id: 'video_3',
+        title: 'Implementasi Teknologi dalam Pendidikan - TED Talk',
+        description: 'Video inspiratif tentang bagaimana teknologi dapat mengubah cara kita belajar dan mengajar di era modern.',
+        type: 'Video',
+        authors: [
+          'Dr. Ken Robinson',
+          'Prof. Sugata Mitra',
+        ],
+        authorId: 'video_author_3',
+        institutionName: 'TED Education',
+        viewCount: 2150,
+        downloadCount: 0,
+        recommendationCount: 124,
+        createdAt: DateTime.now().subtract(Duration(days: 3)),
+        isPublished: true,
+        tags: ['video', 'teknologi', 'pendidikan', 'ted talk'],
+        fileUrl: 'https://www.youtube.com/watch?v=WXR-bCF5dbM&list=RDWXR-bCF5dbM&start_radio=1', // Bill Gates TED Talk
+      ),
+      Content(
+        id: 'video_4',
+        title: 'Tutorial Flutter untuk Pemula - Mobile Development',
+        description: 'Tutorial lengkap belajar Flutter dari dasar untuk pengembangan aplikasi mobile yang modern dan responsif.',
+        type: 'Video',
+        authors: [
+          'Prof. Angela Yu',
+          'Dr. Maximilian Schwarzmüller',
+        ],
+        authorId: 'video_author_4',
+        institutionName: 'Tech Academy Indonesia',
+        viewCount: 3250,
+        downloadCount: 0,
+        recommendationCount: 198,
+        createdAt: DateTime.now().subtract(Duration(hours: 12)),
+        isPublished: true,
+        tags: ['video', 'flutter', 'mobile', 'programming'],
+        fileUrl: 'https://www.youtube.com/watch?v=1xipg02Wu8s', // Flutter Tutorial for Beginners
       ),
     ]);
 
