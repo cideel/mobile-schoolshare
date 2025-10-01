@@ -38,11 +38,15 @@ class ContentListView extends StatelessWidget {
 
   // Helper method to convert Publication to Map for ContentCard
   Map<String, dynamic> _publicationToMap(Publication publication) {
+    final authorsData = publication.authors.map((author) => author.name).toList();
+    print('🔍 Publication: ${publication.title}');
+    print('🔍 Authors: $authorsData');
+    
     return {
       'title': publication.title,
       'type': publication.type,
       'typeLabel': publication.type,
-      'authors': publication.authors,
+      'authors': authorsData, // Convert AuthorModel to String
       'publishedDate': _formatDate(publication.publishedDate),
       'dibaca': publication.readCount,
       'diunduh': 0, // Default value, can be added to Publication model later
