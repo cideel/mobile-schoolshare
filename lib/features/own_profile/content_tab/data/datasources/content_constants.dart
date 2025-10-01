@@ -16,6 +16,7 @@ class ContentData {
     'Poster',
   ];
 
+  // DUMMY DATA Untuk Bottom Sheet Submit Content Pilih Author
   static const List<Map<String, String>> availableAuthors = [
     {'id': '1', 'name': 'Sir Alex Ferguson', 'institution': 'Universitas Indonesia'},
     {'id': '2', 'name': 'Johan Liebert', 'institution': 'Universitas Garut'},

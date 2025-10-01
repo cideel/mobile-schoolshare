@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:schoolshare/core/constants/color.dart';
-
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:schoolshare/features/home/presentation/pages/home_page.dart';
 import 'package:schoolshare/core/widgets/notif.dart';
 import 'package:schoolshare/features/own_profile/profile.dart';
-
 
 class NavBarScreen extends StatelessWidget {
   final PersistentTabController _controller = PersistentTabController(initialIndex: 0);
@@ -48,7 +46,7 @@ class NavBarScreen extends StatelessWidget {
       controller: _controller,
       screens: _buildScreens(),
       items: _navBarsItems(),
-      navBarStyle: NavBarStyle.style3, // Anda bisa mengganti dengan gaya lain.
+      navBarStyle: NavBarStyle.style3,
     );
   }
 }

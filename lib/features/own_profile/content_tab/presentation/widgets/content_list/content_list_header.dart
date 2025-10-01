@@ -32,7 +32,6 @@ class ContentListHeader extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 4),
               Text(
                 '$contentCount konten dipublikasikan',
                 style: AppTextStyle.caption.copyWith(
