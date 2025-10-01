@@ -1,6 +1,6 @@
 class ApiUrls {
-  static const String baseUrl = "http://192.168.1.4:8000/api";
-  static const String storageUrl = "http://192.168.1.4:8000/storage";
+  static const String baseUrl = "http://72.60.76.158:8000/api";
+  static const String storageUrl = "http://72.60.76.158:8000/storage";
   // Authentication APIs
   static const String login = "$baseUrl/login";
   static const String register = "$baseUrl/register";
