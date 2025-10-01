@@ -1,60 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
+import 'package:schoolshare/data/models/users_model.dart';
 
 class StatusTab extends StatelessWidget {
-  const StatusTab({super.key});
+  final UserModel user;
+
+  const StatusTab({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
+
+    // Buat map dinamis untuk statistik
+    final stats = {
+      "RI Score": user.riScore?.toString() ?? "0",
+      "Dibaca": user.readDocs?.toString() ?? "0",
+      "Rekomendasi": user.totalRecommendation?.toString() ?? "0",
+      "Sitasi": user.totalSitasi?.toString() ?? "0",
+    };
+
     return SingleChildScrollView(
       padding: EdgeInsets.all(mq.size.width * 0.04),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Statistics Cards
-          _buildStatisticsGrid(context),
+          GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            mainAxisSpacing: mq.size.width * 0.03,
+            crossAxisSpacing: mq.size.width * 0.03,
+            childAspectRatio: 1.5,
+            children: stats.entries.map((entry) {
+              return _buildStatCard(
+                context,
+                label: entry.key,
+                value: entry.value,
+                color: Colors.grey[100]!,
+              );
+            }).toList(),
+          ),
         ],
       ),
-    );
-  }
-
-  Widget _buildStatisticsGrid(BuildContext context) {
-    final mq = MediaQuery.of(context);
-    return GridView.count(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 2,
-      mainAxisSpacing: mq.size.width * 0.03,
-      crossAxisSpacing: mq.size.width * 0.03,
-      childAspectRatio: 1.5,
-      children: [
-        _buildStatCard(
-          context,
-          value: "7,6",
-          label: "RI Score",
-          color: Colors.grey[100]!,
-        ),
-        _buildStatCard(
-          context,
-          value: "1000",
-          label: "Dibaca",
-          color: Colors.grey[100]!,
-        ),
-        _buildStatCard(
-          context,
-          value: "69",
-          label: "Rekomendasi",
-          color: Colors.grey[100]!,
-        ),
-        _buildStatCard(
-          context,
-          value: "12",
-          label: "Sitasi",
-          color: Colors.grey[100]!,
-        ),
-      ],
     );
   }
 

@@ -26,4 +26,12 @@ class ApiUrls {
   // Detail Content APIs
   static String contentDetail(String contentId) =>
       "$baseUrl/content/$contentId";
+
+  // List Bookmark APIs
+  static String bookmarkList(String userId) => "$baseUrl/bookmark/list/$userId";
+
+  // Search APIs
+  static const String userSearch = "$baseUrl/users/search";
+  static const String publicationSearch = "$baseUrl/content/search";
+  static const String discussionSearch = "$baseUrl/forums/search";
 }

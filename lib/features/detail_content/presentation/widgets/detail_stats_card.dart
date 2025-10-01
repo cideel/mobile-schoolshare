@@ -1,3 +1,5 @@
+// detail_stats_card.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
@@ -7,16 +9,29 @@ class DetailStatsCard extends StatelessWidget {
   final Publication publication;
   const DetailStatsCard({super.key, required this.publication});
 
+  // Helper method untuk menentukan label metrik baca/lihat
+  String get _readMetricLabel {
+    // Cek apakah tipenya adalah 'video' (case-insensitive)
+    if (publication.type.toLowerCase() == 'video') {
+      return 'Dilihat';
+    } else {
+      return 'Dibaca';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
 
+    // 🔥 Menggunakan helper method untuk mendapatkan label yang benar
+    final readLabel = _readMetricLabel;
+
     final stats = {
       "Rekomendasi": publication.likeCount,
-      "Dibaca": publication.readCount,
-      "Diunduh":
-          publication.downloadCount, // TODO: ganti jika API sudah support
-      "Dibagikan": publication.shareCount, // TODO: ganti jika API sudah support
+      // 🔥 Menggunakan label dinamis
+      readLabel: publication.readCount, 
+      "Diunduh": publication.downloadCount,
+      "Dibagikan": publication.shareCount, 
     };
 
     return Padding(
@@ -25,6 +40,7 @@ class DetailStatsCard extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.all(mq.size.width * 0.04),
           child: Column(
+            // Menggunakan .entries.map untuk membangun daftar baris stat
             children:
                 stats.entries.map((e) => _buildRow(e.key, e.value)).toList(),
           ),

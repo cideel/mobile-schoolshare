@@ -22,7 +22,7 @@ class NavBarScreen extends StatelessWidget {
     return [
       PersistentBottomNavBarItem(
         icon: Icon(Icons.home_outlined),
-        title: "Beranda",
+        title: "Beranda", 
         activeColorPrimary: AppColor.componentColor,
         inactiveColorPrimary: Colors.grey,
       ),

@@ -20,85 +20,88 @@ class StatsTab extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-
-        // 🔥 Gunakan OBX untuk membuat tampilan reaktif terhadap status data
         child: controller.obx(
           (user) {
             // Data sudah sukses dimuat, kini gunakan Obx di dalam ListView
-            return ListView(
-              children: [
-                const SizedBox(height: 20),
-                Text(
-                  "Overview",
-                  style:
-                      TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 20),
-
-                // Gunakan Obx untuk memperbarui InfoBox secara independen
-                Obx(() => Row(
-                      children: [
-                        Expanded(
-                          // Data RI Score
-                          child: InfoBox(
-                              score: controller.riScore.value,
-                              title: "RI Score"),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          // Data Dibaca
-                          child: InfoBox(
-                              score: controller.readDocs.value,
-                              title: "Dibaca"),
-                        ),
-                      ],
-                    )),
-                const SizedBox(height: 10),
-                Obx(() => Row(
-                      children: [
-                        Expanded(
-                          // Data Rekomendasi
-                          child: InfoBox(
-                              score: controller.recommendation.value,
-                              title: "Rekomendasi"),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          // Data Sitasi
-                          child: InfoBox(
-                              score: controller.sitasi.value, title: "Sitasi"),
-                        ),
-                      ],
-                    )),
-                const SizedBox(height: 20),
-
-                // Button tetap statis
-                Container(
-                  height: 45,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: AppColor.componentColor),
+            return RefreshIndicator(
+              onRefresh: controller.refreshStatistics,
+              child: ListView(
+                children: [
+                  const SizedBox(height: 20),
+                  Text(
+                    "Overview",
+                    style:
+                        TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
                   ),
-                  child: InkWell(
-                    onTap: () {
-                      // Aksi jika diklik
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.trending_up, color: AppColor.componentColor),
-                        const SizedBox(width: 8),
-                        Text(
-                          "Lihat laporan status mingguan",
-                          style: TextStyle(color: AppColor.componentColor),
-                        ),
-                      ],
+                  const SizedBox(height: 20),
+
+                  // Gunakan Obx untuk memperbarui InfoBox secara independen
+                  Obx(() => Row(
+                        children: [
+                          Expanded(
+                            // Data RI Score
+                            child: InfoBox(
+                                score: controller.riScore.value,
+                                title: "RI Score"),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            // Data Dibaca
+                            child: InfoBox(
+                                score: controller.readDocs.value,
+                                title: "Dibaca"),
+                          ),
+                        ],
+                      )),
+                  const SizedBox(height: 10),
+                  Obx(() => Row(
+                        children: [
+                          Expanded(
+                            // Data Rekomendasi
+                            child: InfoBox(
+                                score: controller.recommendation.value,
+                                title: "Rekomendasi"),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            // Data Sitasi
+                            child: InfoBox(
+                                score: controller.sitasi.value,
+                                title: "Sitasi"),
+                          ),
+                        ],
+                      )),
+                  const SizedBox(height: 20),
+
+                  // Button tetap statis
+                  Container(
+                    height: 45,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColor.componentColor),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        // Aksi jika diklik
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.trending_up,
+                              color: AppColor.componentColor),
+                          const SizedBox(width: 8),
+                          Text(
+                            "Lihat laporan status mingguan",
+                            style: TextStyle(color: AppColor.componentColor),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                const Divider(thickness: 0.5, color: Colors.grey),
-              ],
+                  const SizedBox(height: 10),
+                  const Divider(thickness: 0.5, color: Colors.grey),
+                ],
+              ),
             );
           },
           // Tampilkan loading saat fetch data

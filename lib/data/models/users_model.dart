@@ -1,4 +1,6 @@
 // lib/data/models/users_model.dart
+import 'package:schoolshare/data/models/publication.dart';
+
 import '../../features/auth/domain/entities/user.dart';
 
 class UserModel extends User {
@@ -9,8 +11,10 @@ class UserModel extends User {
     super.bookmarkId,
     required super.name,
     required super.email,
+    super.content,
     super.phone,
     super.profile,
+    super.riScore,
     super.totalSitasi,
     super.hScore,
     super.totalRecommendation,
@@ -39,21 +43,29 @@ class UserModel extends User {
       return DateTime.tryParse(value.toString());
     }
 
+    List<dynamic>? _safeList(dynamic value) {
+      if (value == null) return null;
+      if (value is List) return value;
+      if (value is String) return [value];
+      if (value is Map && value.containsKey("name")) return [value["name"]];
+      return null;
+    }
+
     return UserModel(
       id: _safeInt(json['id']) ?? 0,
       roleGroupId: _safeInt(json['role_group_id']) ?? 1,
-      institutionId: json['institusi'] != null
-          ? [json['institusi']['name'] as String]
-          : null,
-      bookmarkId: json['bookmark_id'] is List
-          ? List<dynamic>.from(json['bookmark_id'])
-          : null,
+      institutionId: _safeList(json['institusi']),
+      bookmarkId: _safeList(json['bookmark_id']),
       name: _safeString(json['name']) ?? 'Unknown',
       email: _safeString(json['email']) ?? 'unknown@email.com',
       phone: _safeString(json['phone']),
       profile: _safeString(json['profile']) ?? _safeString(json['name']),
       totalSitasi: _safeInt(json['total_sitasi']),
       hScore: _safeInt(json['ri_score']),
+      riScore: _safeString(json['ri_score']),
+      content: (json['content'] as List?)
+          ?.map((e) => Publication.fromJson(e))
+          .toList(),
       totalRecommendation: _safeInt(json['total_recommendation']),
       readDocs: _safeInt(json['read_docs']),
       password: _safeString(json['password']),
@@ -113,6 +125,7 @@ class UserModel extends User {
       profile: profile ?? this.profile,
       totalSitasi: totalSitasi ?? this.totalSitasi,
       hScore: hScore ?? this.hScore,
+      content: content ?? this.content,
       totalRecommendation: totalRecommendation ?? this.totalRecommendation,
       readDocs: readDocs ?? this.readDocs,
       password: password ?? this.password,

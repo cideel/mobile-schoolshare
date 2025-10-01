@@ -1,33 +1,23 @@
 import 'package:flutter/material.dart';
 import '../../widgets/content_card.dart';
 import '../../widgets/empty_state_widget.dart';
+import 'package:schoolshare/data/models/users_model.dart';
 
 class ContentTab extends StatelessWidget {
-  const ContentTab({super.key});
+  final UserModel userProfile;
+
+  const ContentTab({super.key, required this.userProfile});
+
+  // Helper untuk kapitalisasi tipe konten
+  String capitalize(String s) {
+    if (s.isEmpty) return s;
+    return s[0].toUpperCase() + s.substring(1).toLowerCase();
+  }
 
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
-    
-    // Mock data for demonstration
-    final contentList = [
-      {
-        'title': 'Artificial Intelligence in Education',
-        'type': 'Artikel',
-        'authors': ['Dr. Jane Smith'],
-        'views': 150,
-        'likes': 25,
-        'date': '2023-10-15',
-      },
-      {
-        'title': 'Machine Learning Research',
-        'type': 'Jurnal',
-        'authors': ['Dr. John Doe', 'Prof. Alice Johnson'],
-        'views': 320,
-        'likes': 48,
-        'date': '2023-09-22',
-      },
-    ];
+    final contentList = userProfile.content ?? [];
 
     return Padding(
       padding: EdgeInsets.all(mq.size.width * 0.04),
@@ -41,15 +31,28 @@ class ContentTab extends StatelessWidget {
               itemCount: contentList.length,
               itemBuilder: (context, index) {
                 final content = contentList[index];
+
+                // Ambil penulis sesuai tipe konten
+                List<String> authors = [];
+                if (content.type.toLowerCase() == 'book') {
+                  authors = content.publishers.isNotEmpty
+                      ? content.publishers.map((e) => e.name).toList()
+                      : [userProfile.name]; // fallback ke pemilik konten
+                } else {
+                  authors = content.authors.isNotEmpty
+                      ? content.authors.map((e) => e.name).toList()
+                      : [userProfile.name]; // fallback
+                }
+
                 return Padding(
                   padding: EdgeInsets.only(bottom: mq.size.height * 0.015),
                   child: ContentCard(
-                    title: content['title'] as String,
-                    type: content['type'] as String,
-                    authors: content['authors'] as List<String>,
-                    views: content['views'] as int,
-                    likes: content['likes'] as int,
-                    date: content['date'] as String,
+                    title: content.title,
+                    type: capitalize(content.type),
+                    authors: authors,
+                    views: content.readCount,
+                    likes: content.likeCount,
+                    date: content.formattedPublishedDate,
                   ),
                 );
               },

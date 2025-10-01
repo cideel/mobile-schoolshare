@@ -1,3 +1,6 @@
+import 'package:schoolshare/data/models/publication.dart';
+import 'package:schoolshare/data/models/users_model.dart';
+
 class User {
   final int id;
   final int roleGroupId;
@@ -6,6 +9,8 @@ class User {
   final String name;
   final String email;
   final String? phone;
+  final List<Publication>? content;
+  final String? riScore;
   final String? profile; // text field that might contain profile data
   final int? totalSitasi;
   final int? hScore;
@@ -22,6 +27,8 @@ class User {
     required this.roleGroupId,
     this.institutionId,
     required this.name,
+    this.riScore,
+    this.content,
     this.bookmarkId,
     required this.email,
     this.phone,

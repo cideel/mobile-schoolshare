@@ -1,12 +1,12 @@
 // lib/features/home/widgets/publication_item.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart'; // Import Get
+import 'package:get/get.dart';
 import 'package:schoolshare/core/constants/color.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
 import 'package:schoolshare/core/services/api_urls.dart';
 import 'package:schoolshare/data/models/publication.dart';
-import 'package:schoolshare/features/home/controllers/home_controller.dart'; // Import Controller
+import 'package:schoolshare/features/home/controllers/home_controller.dart';
 import 'author_name.dart'; // Asumsi AuthorName adalah widget yang ada
 
 class PublicationItem extends StatelessWidget {
@@ -46,24 +46,17 @@ class PublicationItem extends StatelessWidget {
     return const AssetImage('assets/images/example-profile.jpg');
   }
 
-  // 🔥 WIDGET BARU: Menampilkan sisa kontributor sebagai stack horizontal
+  // WIDGET BARU: Menampilkan sisa kontributor sebagai stack horizontal
   Widget _buildRemainingContributors(
       BuildContext context, List<AuthorModel> remaining, double size) {
     final mq = MediaQuery.of(context);
     if (remaining.isEmpty) return const SizedBox.shrink();
 
-    // Tentukan jumlah yang tersisa
     final int count = remaining.length;
-    // Ambil maksimal 3 profil untuk stack
     final List<AuthorModel> profilesToStack = remaining.take(3).toList();
-
-    // Ukuran avatar yang lebih kecil untuk stack horizontal
     final double avatarSize = size * 0.5;
-
-    // List widget untuk profile pictures (stacked)
     final List<Widget> profileStack = [];
 
-    // Tambahkan gambar profil ke stack
     for (int i = 0; i < profilesToStack.length; i++) {
       profileStack.add(
         Positioned(
@@ -84,7 +77,6 @@ class PublicationItem extends StatelessWidget {
       );
     }
 
-    // Widget Text untuk sisa kontributor (+X) jika ada lebih dari 3
     final Widget remainingText = count > 3
         ? Text(
             '+${count - profilesToStack.length}',
@@ -100,7 +92,6 @@ class PublicationItem extends StatelessWidget {
       padding: EdgeInsets.only(top: mq.size.height * 0.006),
       child: Row(
         children: [
-          // Stack gambar profil
           SizedBox(
             width: profilesToStack.length * (avatarSize * 0.7) +
                 (avatarSize * 0.3),
@@ -110,7 +101,6 @@ class PublicationItem extends StatelessWidget {
             ),
           ),
           SizedBox(width: mq.size.width * 0.01),
-          // Teks sisa kontributor
           remainingText,
         ],
       ),
@@ -122,8 +112,6 @@ class PublicationItem extends StatelessWidget {
     final mq = MediaQuery.of(context);
     final HomeController controller = Get.find<HomeController>();
 
-    final String uploaderImageUrl = publication.uploaderProfileUrl;
-
     return Obx(() {
       final currentPubIndex =
           controller.publications.indexWhere((p) => p.id == publication.id);
@@ -131,17 +119,53 @@ class PublicationItem extends StatelessWidget {
           ? controller.publications[currentPubIndex]
           : publication;
 
-      final bool isBook = currentPub.type.toLowerCase() == 'book';
-      final List<AuthorModel> contributors =
+      final pubType = currentPub.type.toLowerCase();
+      final bool isBook = pubType == 'book';
+
+      // 1. Tentukan Kontributor Utama (Author/Publisher pertama)
+      final List<AuthorModel> primaryContributors = 
           isBook ? currentPub.publishers : currentPub.authors;
 
-      // Ambil 3 kontributor pertama untuk ditampilkan secara vertikal
-      final List<AuthorModel> visibleContributors =
-          contributors.take(3).toList();
+      String mainContributorName;
+      String mainContributorImageUrl;
+      String secondaryInfo; 
 
-      // Ambil sisanya untuk indikator horizontal
-      final List<AuthorModel> remainingContributors =
-          contributors.skip(3).toList();
+      if (primaryContributors.isNotEmpty) {
+          // KASUS 1: Ada Penulis/Penerbit (Prioritas Utama)
+          final main = primaryContributors.first;
+          mainContributorName = main.name;
+          mainContributorImageUrl = main.profileUrl ?? currentPub.uploaderProfileUrl;
+          secondaryInfo = isBook ? 'Penerbit' : 'Penulis';
+      } else {
+          // KASUS 2: Tidak ada Penulis/Penerbit (Fallback ke Uploader)
+          mainContributorName = currentPub.uploaderName;
+          mainContributorImageUrl = currentPub.uploaderProfileUrl;
+          
+          // Tentukan secondary info yang lebih jelas untuk fallback
+          String fallbackLabel;
+          if (pubType == 'video') {
+              fallbackLabel = 'Pengunggah Video';
+          } else if (isBook) {
+              fallbackLabel = 'Pengunggah Buku';
+          } else {
+              // Article, Report, atau type lain
+              fallbackLabel = 'Pengunggah';
+          }
+
+          // Prioritaskan nama institusi, lalu label spesifik (Pengunggah)
+          secondaryInfo = currentPub.uploaderInstitutionName.isNotEmpty 
+                            ? currentPub.uploaderInstitutionName 
+                            : fallbackLabel;
+      }
+      
+      // Logika untuk daftar kontributor di bawah judul
+      final List<AuthorModel> contributors = primaryContributors;
+      final List<AuthorModel> visibleContributors = contributors.take(3).toList();
+      final List<AuthorModel> remainingContributors = contributors.skip(3).toList();
+      
+      // 2. Label Dibaca/Dilihat
+      final String readLabel = pubType == 'video' ? 'Dilihat' : 'Dibaca';
+
 
       return GestureDetector(
         onTap: onTap,
@@ -152,14 +176,14 @@ class PublicationItem extends StatelessWidget {
               const Divider(thickness: 0.5, color: Colors.grey),
               SizedBox(height: mq.size.height * 0.01),
 
-              // ... (BAGIAN HEADER: UPLOADER/PENULIS UTAMA TIDAK BERUBAH) ...
+              // --- BAGIAN HEADER: NAMA UTAMA (Author/Publisher/Uploader) ---
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: mq.size.width * 0.05),
                 child: Row(
                   children: [
                     CircleAvatar(
                       radius: mq.size.width * 0.065,
-                      backgroundImage: _getImageProvider(uploaderImageUrl),
+                      backgroundImage: _getImageProvider(mainContributorImageUrl),
                     ),
                     SizedBox(width: mq.size.width * 0.025),
                     Expanded(
@@ -167,12 +191,12 @@ class PublicationItem extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            currentPub.uploaderName,
+                            mainContributorName, // NAMA UTAMA
                             style: AppTextStyle.cardTitle
                                 .copyWith(fontSize: 15.sp),
                           ),
                           Text(
-                            currentPub.uploaderInstitutionName,
+                            secondaryInfo, // INSTITUSI / PENULIS / PENERBIT / PENGUNGGAH
                             style:
                                 AppTextStyle.caption.copyWith(fontSize: 12.sp),
                           ),
@@ -227,7 +251,7 @@ class PublicationItem extends StatelessWidget {
                         ),
                         SizedBox(height: mq.size.height * 0.012),
 
-                        // 🔥 Daftar Kontributor YANG TERLIHAT (Maks 3 Vertikal)
+                        // Daftar Kontributor YANG TERLIHAT (Maks 3 Vertikal)
                         ...visibleContributors
                             .map(
                               (contributor) => Padding(
@@ -242,13 +266,12 @@ class PublicationItem extends StatelessWidget {
                             )
                             .toList(),
 
-                        // 🔥 Indikator Sisa Kontributor (Jika lebih dari 3 total)
+                        // Indikator Sisa Kontributor (Jika lebih dari 3 total)
                         if (contributors.length > 3)
                           _buildRemainingContributors(
                             context,
                             remainingContributors,
-                            mq.size.width *
-                                0.065, // Menggunakan ukuran avatar uploader sebagai referensi
+                            mq.size.width * 0.065, 
                           ),
 
                         SizedBox(height: mq.size.height * 0.012),
@@ -256,8 +279,9 @@ class PublicationItem extends StatelessWidget {
                         // Statistik
                         Row(
                           children: [
+                            // Menggunakan readLabel dinamis
                             Text(
-                              "${currentPub.readCount} Dibaca",
+                              "${currentPub.readCount} $readLabel", 
                               style: AppTextStyle.readCount,
                             ),
                             const Text("  •  "),
@@ -274,7 +298,7 @@ class PublicationItem extends StatelessWidget {
               ),
               SizedBox(height: mq.size.height * 0.015),
 
-              // ... (BAGIAN ACTION ICON TIDAK BERUBAH) ...
+              // ... (BAGIAN ACTION ICON) ...
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: mq.size.width * 0.05),
                 child: Row(

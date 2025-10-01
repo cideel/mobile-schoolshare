@@ -1,14 +1,20 @@
+// detail_content.dart
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+// ... (Import-import lainnya tetap sama)
 import 'package:schoolshare/core/services/home/detail_content_services.dart';
 import 'package:schoolshare/data/repositories/detail_content_repository_impl.dart';
 import 'package:schoolshare/features/detail_content/presentation/controllers/detail_content_controller.dart';
+import 'package:schoolshare/data/models/publication.dart'; 
 import '../widgets/detail_description_card.dart';
 import '../widgets/detail_info_card.dart';
 import '../widgets/detail_stats_card.dart';
 import '../widgets/detail_header.dart';
+import '../widgets/youtube_video_player.dart';
 
 class DetailContent extends StatefulWidget {
+// ... (Kode DetailContent StatefulWidget dan _DetailContentState initState/dispose tetap sama)
   final String contentId;
   const DetailContent({super.key, required this.contentId});
 
@@ -17,13 +23,11 @@ class DetailContent extends StatefulWidget {
 }
 
 class _DetailContentState extends State<DetailContent> {
-  // Simpan controller agar bisa diakses di dispose
   late DetailContentController controller;
 
   @override
   void initState() {
     super.initState();
-    // Inisialisasi controller dengan tag di initState
     controller = Get.put(
       DetailContentController(
         repository: DetailContentRepositoryImpl(
@@ -32,14 +36,11 @@ class _DetailContentState extends State<DetailContent> {
       ),
       tag: widget.contentId,
     );
-    // Muat data segera setelah inisialisasi
     controller.loadDetail(widget.contentId);
   }
 
   @override
   void dispose() {
-    // 🔥 Hapus controller saat widget dibuang (ditinggalkan)
-    // Ini penting untuk membersihkan state dan menghindari kebocoran memori.
     Get.delete<DetailContentController>(tag: widget.contentId, force: true);
     super.dispose();
   }
@@ -60,12 +61,27 @@ class _DetailContentState extends State<DetailContent> {
         }
 
         final pub = controller.publication.value!;
+        
+        // 🔥 PERBAIKAN LOGIKA: 
+        // 1. Menggunakan .toLowerCase() untuk tipe 'video'.
+        // 2. Memeriksa pub.videoUrl (field yang benar untuk URL video).
+        final isVideoContent = pub.type.toLowerCase() == 'video' && pub.videoUrl.isNotEmpty;
+
         return CustomScrollView(
           slivers: [
-            DetailHeader(title: pub.title),
+            DetailHeader(title: pub.title), 
             SliverList(
               delegate: SliverChildListDelegate(
                 [
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.01), 
+
+                  // Tampilkan YoutubeVideoPlayer jika konten adalah Video
+                  if (isVideoContent) ...[
+                    // MENGGUNAKAN pub.videoUrl!
+                    YoutubeVideoPlayer(youtubeUrl: pub.videoUrl), 
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+                  ],
+
                   DetailInfoCard(
                     publication: pub,
                     controller: controller,

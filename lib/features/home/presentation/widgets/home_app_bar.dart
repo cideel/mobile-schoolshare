@@ -31,12 +31,14 @@ class HomeAppBar extends StatelessWidget {
                       context,
                       screen: const SearchPage(),
                       withNavBar: true, // IMPORTANT: This keeps the navbar
-                      pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                      pageTransitionAnimation:
+                          PageTransitionAnimation.cupertino,
                     );
                   },
                   child: Container(
                     height: mq.size.height * 0.05,
-                    padding: EdgeInsets.symmetric(horizontal: mq.size.width * 0.03),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: mq.size.width * 0.03),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
@@ -51,11 +53,12 @@ class HomeAppBar extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: Row(
                       children: [
-                        Icon(Icons.search_rounded, 
-                          color: Colors.grey, 
-                          size: mq.size.width * 0.05 // Responsive icon size
-                        ),
-                        SizedBox(width: mq.size.width * 0.02), // Responsive spacing
+                        Icon(Icons.search_rounded,
+                            color: Colors.grey,
+                            size: mq.size.width * 0.05 // Responsive icon size
+                            ),
+                        SizedBox(
+                            width: mq.size.width * 0.02), // Responsive spacing
                         Text(
                           "Cari publikasi...",
                           style: AppTextStyle.caption.copyWith(
@@ -71,13 +74,17 @@ class HomeAppBar extends StatelessWidget {
               SizedBox(width: mq.size.width * 0.025),
 
               Container(
-                decoration: BoxDecoration(
-                ),
+                decoration: BoxDecoration(),
                 child: IconButton(
                   icon: const Icon(Icons.bookmark_border_rounded),
-                  iconSize: mq.size.width * 0.075, // Responsive icon size
+                  iconSize: mq.size.width * 0.075,
                   color: Colors.white,
-                  onPressed: () => print("Bookmark diklik!"),
+                  onPressed: () => PersistentNavBarNavigator.pushNewScreen(
+                    context,
+                    screen: const SearchPage(),
+                    withNavBar: true,
+                    pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                  ),
                 ),
               ),
             ],

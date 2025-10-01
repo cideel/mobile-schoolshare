@@ -24,14 +24,16 @@ class ProfilePage extends StatelessWidget {
               elevation: innerBoxIsScrolled ? 4 : 0,
               actions: [
                 Padding(
-                  padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
+                  padding:
+                      EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
                   child: const Icon(Icons.settings, color: Colors.black),
                 ),
               ],
               flexibleSpace: FlexibleSpaceBar(
                 background: Padding(
-                  padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.075),
-                  child: const ProfileHeader(), 
+                  padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height * 0.075),
+                  child: const ProfileHeader(),
                 ),
                 collapseMode: CollapseMode.parallax,
               ),

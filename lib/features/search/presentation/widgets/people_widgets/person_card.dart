@@ -1,47 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:schoolshare/core/constants/text_styles.dart';
 
 class PersonCard extends StatelessWidget {
   final String name;
   final String school;
-  final String photoPath;
-  final VoidCallback? onTap;
+  final String? photoPath;
+  final String? initials;
+  final VoidCallback onTap;
 
   const PersonCard({
     super.key,
     required this.name,
     required this.school,
-    required this.photoPath,
-    this.onTap,
+    this.photoPath,
+    this.initials,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final mq = MediaQuery.of(context);
-    
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: mq.size.height * 0.008),
-      child: ListTile(
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: mq.size.width * 0.01,
-        ),
-        leading: CircleAvatar(
-          backgroundImage: AssetImage(photoPath),
-          radius: mq.size.width * 0.07, 
-        ),
-        title: Text(
-          name,
-          style: AppTextStyle.cardTitle.copyWith(
-            fontSize: 16.sp,
-          ),
-        ),
-        subtitle: Text(
-          school,
-          style: AppTextStyle.caption.copyWith(fontSize: 14.sp),
-        ),
-        onTap: onTap,
+    return ListTile(
+      leading: (photoPath != null && photoPath!.isNotEmpty)
+          ? CircleAvatar(
+              backgroundImage: NetworkImage(photoPath!),
+              radius: 24,
+            )
+          : CircleAvatar(
+              radius: 24,
+              backgroundColor: Colors.blue.shade600,
+              child: Text(
+                initials ?? "?",
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+      title: Text(
+        name,
+        style: const TextStyle(fontWeight: FontWeight.w600),
       ),
+      subtitle: Text(school),
+      onTap: onTap,
     );
   }
 }

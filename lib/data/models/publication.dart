@@ -26,6 +26,7 @@ class Publication {
   final String type;
   final String fileArticle;
   final DateTime publishedDate;
+  final String videoUrl; 
 
   // 🔥 DIUBAH MENJADI NON-FINAL SESUAI PERMINTAAN
   int readCount; // total_readings
@@ -44,25 +45,20 @@ class Publication {
   final List<AuthorModel> authors;
   final List<AuthorModel> publishers;
 
-  // MENGHAPUS 'const' KARENA ADA FIELD NON-FINAL
   Publication({
     required this.id,
     required this.title,
     required this.description,
     required this.type,
-    // Metrics (Non-final)
     required this.readCount,
     required this.likeCount,
     required this.downloadCount,
     required this.shareCount,
     required this.fileArticle,
     required this.publishedDate,
-
-    // Status (Non-final)
+    required this.videoUrl,
     required this.isRecommended,
     required this.isBookmarked,
-
-    // Metadata (Final)
     required this.uploaderName,
     required this.uploaderInstitutionName,
     required this.uploaderProfileUrl,
@@ -70,7 +66,6 @@ class Publication {
     required this.publishers,
   });
 
-  // Metode copyWith untuk pembaruan immutable (aman)
   Publication copyWith({
     int? readCount,
     int? likeCount,
@@ -78,6 +73,7 @@ class Publication {
     int? shareCount,
     bool? isRecommended,
     bool? isBookmarked,
+    String? videoUrl,
   }) {
     return Publication(
       id: id,
@@ -85,19 +81,14 @@ class Publication {
       description: description,
       type: type,
       fileArticle: fileArticle,
+      videoUrl: videoUrl ?? this.videoUrl, 
       publishedDate: publishedDate,
-
-      // Metrics updates
       readCount: readCount ?? this.readCount,
       likeCount: likeCount ?? this.likeCount,
       downloadCount: downloadCount ?? this.downloadCount,
       shareCount: shareCount ?? this.shareCount,
-
-      // Status updates
       isRecommended: isRecommended ?? this.isRecommended,
       isBookmarked: isBookmarked ?? this.isBookmarked,
-
-      // Fixed metadata
       uploaderName: uploaderName,
       uploaderInstitutionName: uploaderInstitutionName,
       uploaderProfileUrl: uploaderProfileUrl,
@@ -113,7 +104,6 @@ class Publication {
         .map((e) => AuthorModel.fromJson(e as Map<String, dynamic>))
         .toList();
 
-    // Parsing data Penerbit (Publishers)
     final List<AuthorModel> publisherList =
         (json['publisher_book_data'] as List? ?? [])
             .map((e) => AuthorModel.fromJson(e as Map<String, dynamic>))
@@ -128,25 +118,19 @@ class Publication {
       title: json['name'] as String? ?? 'Judul Tidak Tersedia',
       description: json['description'] as String? ?? 'Tidak ada deskripsi.',
       type: json['type'] as String? ?? 'Dokumen',
-
-      // Metrics
       readCount: json['total_readings'] as int? ?? 0,
       likeCount: json['total_recommendations'] as int? ?? 0,
       downloadCount: json['total_downloaded'] as int? ?? 0,
-      shareCount: json['total_shared'] as int? ?? 0,
-
       fileArticle: json['file_article'] as String? ?? '',
+      videoUrl: json['video'] as String? ?? '',
+      shareCount: json['total_shared'] as int? ?? 0,
       publishedDate: publishedDate,
-
-      // Status
       isRecommended: json['is_recommended_by_user'] as bool? ?? false,
       isBookmarked: json['is_bookmarked_by_user'] as bool? ?? false,
-
       uploaderName: user?['name'] as String? ?? 'Anonim',
       uploaderInstitutionName:
           user?['institusi']?['name'] as String? ?? 'Institusi Tidak Diketahui',
       uploaderProfileUrl: user?['profile'] as String? ?? '',
-
       authors: authorList,
       publishers: publisherList,
     );

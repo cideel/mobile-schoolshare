@@ -1,9 +1,12 @@
 import 'package:get/get.dart';
+import 'package:schoolshare/features/bookmark/bindings/bookmark_binding.dart';
 import 'package:schoolshare/features/detail_content/presentation/bindings/content_detail_binding.dart';
 import 'package:schoolshare/features/detail_content/presentation/pages/detail_content.dart';
 import 'package:schoolshare/features/own_profile/bindings/header_profile_binding.dart';
 import 'package:schoolshare/features/own_profile/bindings/profile_tab_profile_binding.dart';
 import 'package:schoolshare/features/own_profile/bindings/statistic_tab_binding.dart';
+import 'package:schoolshare/features/search/presentation/bindings/people_binding.dart';
+import 'package:schoolshare/features/search/presentation/pages/main_search/search_page.dart';
 import '../../features/auth/bindings/auth_binding.dart';
 import '../../features/home/bindings/home_binding.dart';
 import '../../features/auth/presentation/pages/login.dart';
@@ -45,6 +48,7 @@ class AppPages {
         HeaderProfileBinding(),
         ProfileTabBinding(),
         StatisticTabBinding(),
+        PeopleBinding(),
       ],
     ),
     GetPage(
@@ -55,6 +59,18 @@ class AppPages {
         return DetailContent(contentId: contentId);
       },
       binding: ContentDetailBinding(),
+    ),
+    GetPage(
+      name: Routes.BOOKMARK,
+      page: () => NavBarScreen(),
+      bindings: [
+        BookmarkBinding(),
+      ],
+    ),
+    GetPage(
+      name: Routes.SEARCH,
+      page: () => const SearchPage(),
+      binding: PeopleBinding(),
     ),
   ];
 }

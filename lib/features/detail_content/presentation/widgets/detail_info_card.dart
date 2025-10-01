@@ -1,3 +1,5 @@
+// detail_info_card.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -23,10 +25,9 @@ class DetailInfoCard extends StatelessWidget {
     final pub = publication;
 
     // 1. Tentukan daftar entitas utama (Penulis atau Penerbit)
-    // PublisherModel dan AuthorModel memiliki struktur field yang sama (name, profileUrl) untuk display
-    final List<dynamic> primaryEntities = pub.type == 'article'
+    final List<dynamic> primaryEntities = pub.type.toLowerCase() == 'article'
         ? pub.authors
-        : pub.type == 'book'
+        : pub.type.toLowerCase() == 'book'
             ? pub.publishers
             : [];
 
@@ -42,7 +43,6 @@ class DetailInfoCard extends StatelessWidget {
         .toList();
 
     // 3. Tambahkan Uploader jika namanya tidak ada di daftar entitas utama
-    // Logika ini mencegah duplikasi jika uploader juga terdaftar sebagai penulis/penerbit
     bool uploaderIsPrimary =
         primaryEntities.any((entity) => entity.name == pub.uploaderName);
 
@@ -60,6 +60,40 @@ class DetailInfoCard extends StatelessWidget {
 
     return entityWidgets;
   }
+
+  // 🔥 Fungsi untuk menentukan teks status ketersediaan (PERBAIKAN UTAMA #1)
+  String get _availabilityStatusText {
+    final type = publication.type.toLowerCase();
+
+    if (type == 'video') {
+      // Untuk video, cek videoUrl
+      return publication.videoUrl.isNotEmpty
+          ? 'Video tersedia'
+          : 'Video tidak tersedia';
+    } else {
+      // Untuk dokumen, cek fileArticle
+      return publication.fileArticle.isNotEmpty
+          ? 'Dokumen tersedia'
+          : 'Dokumen tidak tersedia';
+    }
+  }
+
+  // 🔥 Fungsi untuk menentukan status ketersediaan file (PERBAIKAN UTAMA #2)
+  bool get _isFileAvailable {
+    final type = publication.type.toLowerCase();
+
+    if (type == 'video') {
+      return publication.videoUrl.isNotEmpty;
+    } else {
+      return publication.fileArticle.isNotEmpty;
+    }
+  }
+  
+  // 🔥 Fungsi untuk menentukan apakah tombol unduh/baca harus ditampilkan (PERBAIKAN UTAMA #3)
+  bool get _shouldShowDocumentActions {
+      return publication.type.toLowerCase() != 'video';
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +119,8 @@ class DetailInfoCard extends StatelessWidget {
                 children: [
                   _label(pub.type.capitalizeFirst ?? "Dokumen", true),
                   SizedBox(width: mq.size.width * 0.02),
-                  _label("Dokumen tersedia", pub.fileArticle.isNotEmpty),
+                  // 🔥 Menggunakan helper function yang baru
+                  _label(_availabilityStatusText, _isFileAvailable),
                 ],
               ),
               SizedBox(height: mq.size.height * 0.012),
@@ -94,7 +129,6 @@ class DetailInfoCard extends StatelessWidget {
                 style: AppTextStyle.titleLarge.copyWith(fontSize: 18.sp),
               ),
               SizedBox(height: mq.size.height * 0.006),
-              // Menghapus 'Tanggal Terbit' label dan icon. Hanya menampilkan tanggal.
               Text(pub.formattedPublishedDate, style: AppTextStyle.dateText),
 
               Divider(height: mq.size.height * 0.036),
@@ -106,51 +140,56 @@ class DetailInfoCard extends StatelessWidget {
               if (combinedEntities.isNotEmpty)
                 Divider(height: mq.size.height * 0.036),
 
-              // Tombol Aksi Dokumen
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColor.componentColor,
-                        minimumSize: Size(mq.size.width * 0.4, 45),
-                      ),
-                      onPressed: pub.fileArticle.isNotEmpty
-                          ? () => controller.handleDownload()
-                          : null,
-                      child: Text(
-                        "Unduh dokumen",
-                        style: AppTextStyle.badge,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: mq.size.width * 0.025),
-                  Expanded(
-                    child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: AppColor.componentColor),
-                        minimumSize: Size(mq.size.width * 0.4, 45),
-                      ),
-                      onPressed: pub.fileArticle.isNotEmpty
-                          ? () {
-                              Get.snackbar('Aksi', 'Membuka dokumen...',
-                                  snackPosition: SnackPosition.TOP);
-                            }
-                          : null,
-                      child: Text(
-                        "Baca dokumen",
-                        style: AppTextStyle.caption.copyWith(
-                          color: AppColor.componentColor,
-                          fontWeight: FontWeight.bold,
+              // 🔥 Tombol Aksi Dokumen (HANYA TAMPIL JIKA BUKAN VIDEO)
+              if (_shouldShowDocumentActions)
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColor.componentColor,
+                          minimumSize: Size(mq.size.width * 0.4, 45),
+                        ),
+                        // 🔥 Gunakan pub.fileArticle untuk pengecekan unduh
+                        onPressed: pub.fileArticle.isNotEmpty
+                            ? () => controller.handleDownload()
+                            : null,
+                        child: Text(
+                          "Unduh dokumen",
+                          style: AppTextStyle.badge,
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                    SizedBox(width: mq.size.width * 0.025),
+                    Expanded(
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: AppColor.componentColor),
+                          minimumSize: Size(mq.size.width * 0.4, 45),
+                        ),
+                        // 🔥 Gunakan pub.fileArticle untuk pengecekan baca
+                        onPressed: pub.fileArticle.isNotEmpty
+                            ? () {
+                                Get.snackbar('Aksi', 'Membuka dokumen...',
+                                    snackPosition: SnackPosition.TOP);
+                              }
+                            : null,
+                        child: Text(
+                          "Baca dokumen",
+                          style: AppTextStyle.caption.copyWith(
+                            color: AppColor.componentColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              
+              // Tambahkan jarak vertikal setelah tombol aksi (baik ditampilkan/disembunyikan)
               SizedBox(height: mq.size.height * 0.012),
 
-              // Aksi Metrik Dinamis
+              // Aksi Metrik Dinamis (TETAP DITAMPILKAN)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -189,6 +228,7 @@ class DetailInfoCard extends StatelessWidget {
     );
   }
 
+  // ... (Widget _label dan _action tetap sama)
   Widget _label(String text, bool filled) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),

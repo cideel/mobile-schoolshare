@@ -23,7 +23,7 @@ class StatisticTabController extends GetxController with StateMixin<UserModel> {
     try {
       final UserModel user = await _repository.fetchUserProfile();
 
-      riScore.value = user.hScore?.toString() ?? '0';
+      riScore.value = user.riScore?.toString() ?? '0';
       readDocs.value = user.readDocs?.toString() ?? '0';
       recommendation.value = user.totalRecommendation?.toString() ?? '0';
       sitasi.value = user.totalSitasi?.toString() ?? '0';
@@ -37,5 +37,9 @@ class StatisticTabController extends GetxController with StateMixin<UserModel> {
       sitasi.value = 'N/A';
       change(null, status: RxStatus.error(e.toString()));
     }
+  }
+
+  Future<void> refreshStatistics() async {
+    await fetchStatistics();
   }
 }

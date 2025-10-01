@@ -1,18 +1,26 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
+import 'package:schoolshare/features/search/presentation/controllers/people_controller.dart';
+// nanti tambahin juga publication_controller & discussion_controller
+
+enum SearchType { people, publication, discussion }
 
 class CustomSearchBar extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
-  final VoidCallback? onChanged;
+  final SearchType searchType;
   final VoidCallback? onClear;
+  final ValueChanged<String>? onSearch;
 
   const CustomSearchBar({
     super.key,
     required this.controller,
     this.hintText = "Cari sesuatu...",
-    this.onChanged,
+    required this.searchType,
     this.onClear,
+    this.onSearch,
   });
 
   @override
@@ -20,20 +28,47 @@ class CustomSearchBar extends StatefulWidget {
 }
 
 class _CustomSearchBarState extends State<CustomSearchBar> {
+  Timer? _debounce;
+
+  void _handleSearch(String value) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 400), () {
+      switch (widget.searchType) {
+        case SearchType.people:
+          Get.find<PeopleController>().fetchItems(query: value);
+          break;
+        case SearchType.publication:
+          // Get.find<PublicationController>().fetchPublications(query: value);
+          break;
+        case SearchType.discussion:
+          // Get.find<DiscussionController>().fetchDiscussions(query: value);
+          break;
+      }
+      // trigger callback tambahan jika ada
+      if (widget.onSearch != null) widget.onSearch!(value);
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
-    
+
     return Container(
       height: mq.size.height * 0.048,
       margin: EdgeInsets.only(right: mq.size.width * 0.04),
       padding: EdgeInsets.symmetric(horizontal: mq.size.width * 0.04),
       decoration: BoxDecoration(
-        color: Colors.white, 
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
+            color: Colors.black.withOpacity(0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -52,7 +87,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
               controller: widget.controller,
               onChanged: (value) {
                 setState(() {});
-                widget.onChanged?.call();
+                _handleSearch(value);
               },
               style: AppTextStyle.bodyText.copyWith(
                 fontSize: 14,
@@ -67,7 +102,8 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                 ),
                 border: InputBorder.none,
                 isDense: true,
-                contentPadding: EdgeInsets.symmetric(vertical: mq.size.height * 0.012),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: mq.size.height * 0.012),
               ),
             ),
           ),
@@ -77,6 +113,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                 widget.controller.clear();
                 setState(() {});
                 widget.onClear?.call();
+                _handleSearch(""); // reset search ketika clear
               },
               child: Icon(
                 Icons.clear_rounded,
