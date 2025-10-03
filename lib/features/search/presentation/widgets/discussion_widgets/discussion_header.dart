@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/core/constants/color.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
+import 'package:schoolshare/core/services/api_urls.dart';
 import '../../../../../data/models/discussion_item.dart';
 
 class DiscussionHeader extends StatelessWidget {
@@ -15,7 +16,7 @@ class DiscussionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
-    
+
     return Container(
       padding: EdgeInsets.all(mq.size.width * 0.04),
       decoration: BoxDecoration(
@@ -37,7 +38,7 @@ class DiscussionHeader extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
-              discussion.topic,
+              discussion.title,
               style: AppTextStyle.caption.copyWith(
                 color: AppColor.componentColor,
                 fontWeight: FontWeight.w600,
@@ -65,14 +66,14 @@ class DiscussionHeader extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 16,
-                backgroundImage: AssetImage(discussion.authorPhoto),
+                backgroundImage: _getImageProvider(discussion.author.profile),
               ),
               SizedBox(width: mq.size.width * 0.03),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    discussion.author,
+                    discussion.author.name,
                     style: AppTextStyle.authorName.copyWith(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w600,
@@ -94,7 +95,7 @@ class DiscussionHeader extends StatelessWidget {
 
           // Content
           Text(
-            discussion.description,
+            discussion.body,
             style: AppTextStyle.bodyText.copyWith(
               fontSize: 14.sp,
               height: 1.4,
@@ -127,7 +128,11 @@ class DiscussionHeader extends StatelessWidget {
     );
   }
 
-  String _formatTimeAgo(DateTime dateTime) {
+  String _formatTimeAgo(DateTime? dateTime) {
+    if (dateTime == null) {
+      return 'Waktu tidak diketahui';
+    }
+
     final now = DateTime.now();
     final difference = now.difference(dateTime);
 
@@ -140,5 +145,17 @@ class DiscussionHeader extends StatelessWidget {
     } else {
       return 'Baru saja';
     }
+  }
+
+  ImageProvider _getImageProvider(String? photo) {
+    if (photo != null && photo.isNotEmpty) {
+      if (photo.startsWith('http://') || photo.startsWith('https://')) {
+        return NetworkImage(photo);
+      } else {
+        final separator = photo.startsWith('/') ? '' : '/';
+        return NetworkImage("${ApiUrls.storageUrl}$separator$photo");
+      }
+    }
+    return const AssetImage('assets/images/example-profile.jpg');
   }
 }

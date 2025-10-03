@@ -35,8 +35,8 @@ class ContentTab extends StatelessWidget {
                 // Ambil penulis sesuai tipe konten
                 List<String> authors = [];
                 if (content.type.toLowerCase() == 'book') {
-                  authors = content.publishers.isNotEmpty
-                      ? content.publishers.map((e) => e.name).toList()
+                  authors = content.authors.isNotEmpty
+                      ? content.authors.map((e) => e.name).toList()
                       : [userProfile.name]; // fallback ke pemilik konten
                 } else {
                   authors = content.authors.isNotEmpty

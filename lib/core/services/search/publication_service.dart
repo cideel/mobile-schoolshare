@@ -2,14 +2,14 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:schoolshare/core/services/api_urls.dart';
 import 'package:schoolshare/core/utils/storage_utils.dart';
+import 'package:schoolshare/data/models/publication.dart';
 
-class PeopleService {
-  Future<List<Map<String, dynamic>>> searchUsers({String? query}) async {
+class PublicationService {
+  Future<List<Publication>> searchPublications({String? query}) async {
     final token = await StorageUtils.getToken();
-
     final url = query == null || query.isEmpty
-        ? Uri.parse(ApiUrls.userSearch)
-        : Uri.parse("${ApiUrls.userSearch}?q=$query");
+        ? Uri.parse(ApiUrls.publicationSearch)
+        : Uri.parse("${ApiUrls.publicationSearch}?q=$query");
 
     final response = await http.get(
       url,
@@ -22,15 +22,9 @@ class PeopleService {
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(response.body);
       final List data = jsonData["data"];
-      return List<Map<String, dynamic>>.from(data);
+      return data.map((e) => Publication.fromJson(e)).toList();
     } else {
-      // Ambil pesan error dari API
-      try {
-        final data = jsonDecode(response.body);
-        throw Exception(data['message'] ?? "Gagal memuat data");
-      } catch (_) {
-        throw Exception("Gagal memuat data");
-      }
+      throw Exception("Failed to load publications");
     }
   }
 }

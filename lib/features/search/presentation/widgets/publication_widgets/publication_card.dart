@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/core/constants/color.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
+import 'package:schoolshare/core/services/api_urls.dart';
 
 class PublicationCard extends StatelessWidget {
   final String title;
@@ -24,7 +25,7 @@ class PublicationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
-    
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -40,24 +41,23 @@ class PublicationCard extends StatelessWidget {
               style: AppTextStyle.cardTitle.copyWith(fontSize: 16.sp),
             ),
             SizedBox(height: mq.size.height * 0.008),
-        
+
             // Tag
             Row(
               children: [
                 _buildTag(type, bgColor: AppColor.componentColor),
                 SizedBox(width: mq.size.width * 0.02),
-                
               ],
             ),
             SizedBox(height: mq.size.height * 0.008),
-        
+
             // Tanggal
             Text(
               date,
               style: AppTextStyle.dateText.copyWith(fontSize: 13.sp),
             ),
             SizedBox(height: mq.size.height * 0.008),
-        
+
             // Authors
             Wrap(
               spacing: mq.size.width * 0.02,
@@ -67,7 +67,7 @@ class PublicationCard extends StatelessWidget {
                   .toList(),
             ),
             SizedBox(height: mq.size.height * 0.008),
-        
+
             // Reads
             Text(
               "$reads Dibaca",
@@ -95,22 +95,33 @@ class PublicationCard extends StatelessWidget {
   }
 
   Widget _buildAuthor(Map<String, dynamic> author, MediaQueryData mq) {
+    ImageProvider? imageProvider;
+
+    final photo = author['photo'];
+    if (photo != null && photo.toString().isNotEmpty) {
+      if (photo.startsWith('http://') || photo.startsWith('https://')) {
+        imageProvider = NetworkImage(photo);
+      } else {
+        final separator = photo.startsWith('/') ? '' : '/';
+        imageProvider = NetworkImage("${ApiUrls.storageUrl}$separator$photo");
+      }
+    } else {
+      imageProvider = const AssetImage('assets/images/example-profile.jpg');
+    }
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         CircleAvatar(
           radius: mq.size.width * 0.025,
           backgroundColor: Colors.grey.shade300,
-          backgroundImage: author['photo'] != null ? AssetImage(author['photo']) : null,
-          child: author['photo'] == null
-              ? Icon(Icons.person, size: mq.size.width * 0.03, color: Colors.white)
-              : null,
+          backgroundImage: imageProvider,
         ),
         SizedBox(width: mq.size.width * 0.015),
         Text(
           author['name'],
           style: AppTextStyle.authorName.copyWith(fontSize: 13.sp),
-        )
+        ),
       ],
     );
   }

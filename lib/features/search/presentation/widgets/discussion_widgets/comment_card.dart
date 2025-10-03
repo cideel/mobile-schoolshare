@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
 import 'package:schoolshare/core/constants/color.dart';
-import '../../../../../data/models/discussion_item.dart';
+import 'package:schoolshare/core/services/api_urls.dart';
+import 'package:schoolshare/data/models/comment_item.dart';
 
 class CommentCard extends StatefulWidget {
   final CommentItem comment;
-  final Function(String, String)? onReplySubmitted; // (parentCommentId, replyContent)
-  final int nestingLevel; // For limiting nesting depth
+  final Function(String, String)? onReplySubmitted;
+  final int nestingLevel;
 
   const CommentCard({
     super.key,
@@ -47,14 +48,16 @@ class _CommentCardState extends State<CommentCard> {
   }
 
   void _submitReply() {
-    if (_replyController.text.trim().isNotEmpty && widget.onReplySubmitted != null) {
+    if (_replyController.text.trim().isNotEmpty &&
+        widget.onReplySubmitted != null) {
       try {
-        widget.onReplySubmitted!(widget.comment.id, _replyController.text.trim());
+        widget.onReplySubmitted!(
+            widget.comment.id.toString(), _replyController.text.trim());
         _replyController.clear();
         setState(() {
           _isReplying = false;
         });
-        
+
         // Show success message
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -83,7 +86,7 @@ class _CommentCardState extends State<CommentCard> {
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
-    
+
     return Container(
       margin: EdgeInsets.only(
         bottom: mq.size.height * 0.01,
@@ -96,12 +99,14 @@ class _CommentCardState extends State<CommentCard> {
           Container(
             padding: EdgeInsets.all(mq.size.width * 0.04),
             decoration: BoxDecoration(
-              color: widget.nestingLevel > 0 ? Colors.grey[100] : Colors.grey[50],
+              color:
+                  widget.nestingLevel > 0 ? Colors.grey[100] : Colors.grey[50],
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: widget.nestingLevel > 0 ? Colors.grey[300]! : Colors.grey[200]!, 
-                width: 1
-              ),
+                  color: widget.nestingLevel > 0
+                      ? Colors.grey[300]!
+                      : Colors.grey[200]!,
+                  width: 1),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,7 +116,8 @@ class _CommentCardState extends State<CommentCard> {
                   children: [
                     CircleAvatar(
                       radius: mq.size.width * 0.03,
-                      backgroundImage: AssetImage(widget.comment.authorPhoto),
+                      backgroundImage:
+                          _getImageProvider(widget.comment.author.profile),
                     ),
                     SizedBox(width: mq.size.width * 0.025),
                     Expanded(
@@ -119,7 +125,7 @@ class _CommentCardState extends State<CommentCard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.comment.author,
+                            widget.comment.author.name,
                             style: AppTextStyle.authorName.copyWith(
                               fontSize: 13.sp,
                               fontWeight: FontWeight.w600,
@@ -296,7 +302,8 @@ class _CommentCardState extends State<CommentCard> {
             ),
 
           // Replies
-          if (widget.comment.replies != null && widget.comment.replies!.isNotEmpty)
+          if (widget.comment.replies != null &&
+              widget.comment.replies!.isNotEmpty)
             Container(
               margin: EdgeInsets.only(top: mq.size.height * 0.01),
               child: Column(
@@ -314,7 +321,11 @@ class _CommentCardState extends State<CommentCard> {
     );
   }
 
-  String _getTimeAgo(DateTime dateTime) {
+  String _getTimeAgo(DateTime? dateTime) {
+    if (dateTime == null) {
+      return 'Waktu tidak diketahui';
+    }
+
     final now = DateTime.now();
     final difference = now.difference(dateTime);
 
@@ -327,5 +338,17 @@ class _CommentCardState extends State<CommentCard> {
     } else {
       return 'Baru saja';
     }
+  }
+
+  ImageProvider _getImageProvider(String? photo) {
+    if (photo != null && photo.isNotEmpty) {
+      if (photo.startsWith('http://') || photo.startsWith('https://')) {
+        return NetworkImage(photo);
+      } else {
+        final separator = photo.startsWith('/') ? '' : '/';
+        return NetworkImage("${ApiUrls.storageUrl}$separator$photo");
+      }
+    }
+    return const AssetImage('assets/images/example-profile.jpg');
   }
 }

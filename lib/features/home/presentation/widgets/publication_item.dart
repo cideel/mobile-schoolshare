@@ -120,52 +120,55 @@ class PublicationItem extends StatelessWidget {
           : publication;
 
       final pubType = currentPub.type.toLowerCase();
-      final bool isBook = pubType == 'book';
+      final bool isRegulation =
+          pubType == 'peraturan'; // Tipe 'peraturan' tidak memiliki authors
+      final bool hasAuthors = currentPub.authors.isNotEmpty;
 
-      // 1. Tentukan Kontributor Utama (Author/Publisher pertama)
-      final List<AuthorModel> primaryContributors = 
-          isBook ? currentPub.publishers : currentPub.authors;
-
+      // 1. Tentukan Kontributor Utama
       String mainContributorName;
       String mainContributorImageUrl;
-      String secondaryInfo; 
+      String secondaryInfo;
 
-      if (primaryContributors.isNotEmpty) {
-          // KASUS 1: Ada Penulis/Penerbit (Prioritas Utama)
-          final main = primaryContributors.first;
-          mainContributorName = main.name;
-          mainContributorImageUrl = main.profileUrl ?? currentPub.uploaderProfileUrl;
-          secondaryInfo = isBook ? 'Penerbit' : 'Penulis';
+      if (hasAuthors && !isRegulation) {
+        // KASUS 1: Ada Penulis (Prioritas Utama, jika bukan Peraturan)
+        final main = currentPub.authors.first;
+        mainContributorName = main.name;
+        mainContributorImageUrl =
+            main.profileUrl ?? currentPub.uploaderProfileUrl;
+        secondaryInfo = 'Penulis';
       } else {
-          // KASUS 2: Tidak ada Penulis/Penerbit (Fallback ke Uploader)
-          mainContributorName = currentPub.uploaderName;
-          mainContributorImageUrl = currentPub.uploaderProfileUrl;
-          
-          // Tentukan secondary info yang lebih jelas untuk fallback
-          String fallbackLabel;
-          if (pubType == 'video') {
-              fallbackLabel = 'Pengunggah Video';
-          } else if (isBook) {
-              fallbackLabel = 'Pengunggah Buku';
-          } else {
-              // Article, Report, atau type lain
-              fallbackLabel = 'Pengunggah';
-          }
+        // KASUS 2: Tidak ada Penulis atau Tipe 'Peraturan' (Fallback ke Uploader)
+        mainContributorName = currentPub.uploaderName;
+        mainContributorImageUrl = currentPub.uploaderProfileUrl;
 
-          // Prioritaskan nama institusi, lalu label spesifik (Pengunggah)
-          secondaryInfo = currentPub.uploaderInstitutionName.isNotEmpty 
-                            ? currentPub.uploaderInstitutionName 
-                            : fallbackLabel;
+        String fallbackLabel;
+        // Label spesifik untuk fallback
+        if (isRegulation) {
+          fallbackLabel = 'Penerbit Peraturan';
+        } else if (pubType == 'video') {
+          fallbackLabel = 'Pengunggah Video';
+        } else {
+          fallbackLabel = 'Pengunggah';
+        }
+
+        // Prioritaskan nama institusi, lalu label spesifik
+        secondaryInfo = currentPub.uploaderInstitutionName.isNotEmpty
+            ? currentPub.uploaderInstitutionName
+            : fallbackLabel;
       }
-      
-      // Logika untuk daftar kontributor di bawah judul
-      final List<AuthorModel> contributors = primaryContributors;
-      final List<AuthorModel> visibleContributors = contributors.take(3).toList();
-      final List<AuthorModel> remainingContributors = contributors.skip(3).toList();
-      
-      // 2. Label Dibaca/Dilihat
-      final String readLabel = pubType == 'video' ? 'Dilihat' : 'Dibaca';
 
+      // 2. Tentukan daftar kontributor yang akan ditampilkan di bawah judul
+      // Hanya tampilkan authors jika ada dan bukan tipe 'peraturan'
+      final List<AuthorModel> contributors =
+          (hasAuthors && !isRegulation) ? currentPub.authors : [];
+
+      final List<AuthorModel> visibleContributors =
+          contributors.take(3).toList();
+      final List<AuthorModel> remainingContributors =
+          contributors.skip(3).toList();
+
+      // 3. Label Dibaca/Dilihat
+      final String readLabel = pubType == 'video' ? 'Dilihat' : 'Dibaca';
 
       return GestureDetector(
         onTap: onTap,
@@ -176,14 +179,15 @@ class PublicationItem extends StatelessWidget {
               const Divider(thickness: 0.5, color: Colors.grey),
               SizedBox(height: mq.size.height * 0.01),
 
-              // --- BAGIAN HEADER: NAMA UTAMA (Author/Publisher/Uploader) ---
+              // --- BAGIAN HEADER: NAMA UTAMA (Author/Uploader) ---
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: mq.size.width * 0.05),
                 child: Row(
                   children: [
                     CircleAvatar(
                       radius: mq.size.width * 0.065,
-                      backgroundImage: _getImageProvider(mainContributorImageUrl),
+                      backgroundImage:
+                          _getImageProvider(mainContributorImageUrl),
                     ),
                     SizedBox(width: mq.size.width * 0.025),
                     Expanded(
@@ -196,7 +200,7 @@ class PublicationItem extends StatelessWidget {
                                 .copyWith(fontSize: 15.sp),
                           ),
                           Text(
-                            secondaryInfo, // INSTITUSI / PENULIS / PENERBIT / PENGUNGGAH
+                            secondaryInfo, // INSTITUSI / PENULIS / PENGUNGGAH
                             style:
                                 AppTextStyle.caption.copyWith(fontSize: 12.sp),
                           ),
@@ -251,7 +255,7 @@ class PublicationItem extends StatelessWidget {
                         ),
                         SizedBox(height: mq.size.height * 0.012),
 
-                        // Daftar Kontributor YANG TERLIHAT (Maks 3 Vertikal)
+                        // Daftar Kontributor (Hanya Authors yang lolos filter)
                         ...visibleContributors
                             .map(
                               (contributor) => Padding(
@@ -271,17 +275,19 @@ class PublicationItem extends StatelessWidget {
                           _buildRemainingContributors(
                             context,
                             remainingContributors,
-                            mq.size.width * 0.065, 
+                            mq.size.width * 0.065,
                           ),
 
-                        SizedBox(height: mq.size.height * 0.012),
+                        // Jika tidak ada authors/peraturan, tambahkan sedikit ruang vertikal
+                        if (contributors.isEmpty)
+                          SizedBox(height: mq.size.height * 0.008),
 
                         // Statistik
                         Row(
                           children: [
                             // Menggunakan readLabel dinamis
                             Text(
-                              "${currentPub.readCount} $readLabel", 
+                              "${currentPub.readCount} $readLabel",
                               style: AppTextStyle.readCount,
                             ),
                             const Text("  •  "),

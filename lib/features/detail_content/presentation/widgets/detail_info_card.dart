@@ -19,32 +19,34 @@ class DetailInfoCard extends StatelessWidget {
     required this.controller,
   });
 
-  // Helper method untuk menampilkan daftar penulis/penerbit dan uploader
+  // Helper method untuk menampilkan daftar penulis dan uploader
   List<Widget> _buildCombinedEntities(BuildContext context) {
     final mq = MediaQuery.of(context);
     final pub = publication;
 
-    // 1. Tentukan daftar entitas utama (Penulis atau Penerbit)
-    final List<dynamic> primaryEntities = pub.type.toLowerCase() == 'article'
-        ? pub.authors
-        : pub.type.toLowerCase() == 'book'
-            ? pub.publishers
-            : [];
+    final pubType = pub.type.toLowerCase();
 
-    // 2. Buat daftar widget dari entitas utama
-    List<Widget> entityWidgets = primaryEntities
-        .map((entity) => Padding(
+    // Tipe 'peraturan' tidak memiliki authors yang ditampilkan sebagai penulis
+    final bool isRegulation = pubType == 'peraturan';
+
+    // 1. Tentukan daftar entitas utama (hanya Penulis, kecuali Peraturan)
+    final List<AuthorModel> primaryAuthors =
+        (!isRegulation && pub.authors.isNotEmpty) ? pub.authors : [];
+
+    // 2. Buat daftar widget dari entitas utama (Penulis)
+    List<Widget> entityWidgets = primaryAuthors
+        .map((author) => Padding(
               padding: EdgeInsets.only(bottom: mq.size.height * 0.006),
               child: AuthorName(
-                img: entity.profileUrl.toString(),
-                name: entity.name.toString(),
+                img: author.profileUrl.toString(),
+                name: author.name.toString(),
               ),
             ))
         .toList();
 
-    // 3. Tambahkan Uploader jika namanya tidak ada di daftar entitas utama
+    // 3. Tambahkan Uploader jika namanya tidak ada di daftar Penulis utama
     bool uploaderIsPrimary =
-        primaryEntities.any((entity) => entity.name == pub.uploaderName);
+        primaryAuthors.any((author) => author.name == pub.uploaderName);
 
     if (pub.uploaderName.isNotEmpty && !uploaderIsPrimary) {
       entityWidgets.add(
@@ -61,7 +63,7 @@ class DetailInfoCard extends StatelessWidget {
     return entityWidgets;
   }
 
-  // 🔥 Fungsi untuk menentukan teks status ketersediaan (PERBAIKAN UTAMA #1)
+  // 🔥 Fungsi untuk menentukan teks status ketersediaan (Menggunakan filePath)
   String get _availabilityStatusText {
     final type = publication.type.toLowerCase();
 
@@ -71,29 +73,29 @@ class DetailInfoCard extends StatelessWidget {
           ? 'Video tersedia'
           : 'Video tidak tersedia';
     } else {
-      // Untuk dokumen, cek fileArticle
-      return publication.fileArticle.isNotEmpty
+      // Untuk dokumen, cek filePath (PERUBAHAN!)
+      return publication.filePath.isNotEmpty
           ? 'Dokumen tersedia'
           : 'Dokumen tidak tersedia';
     }
   }
 
-  // 🔥 Fungsi untuk menentukan status ketersediaan file (PERBAIKAN UTAMA #2)
+  // 🔥 Fungsi untuk menentukan status ketersediaan file (Menggunakan filePath)
   bool get _isFileAvailable {
     final type = publication.type.toLowerCase();
 
     if (type == 'video') {
       return publication.videoUrl.isNotEmpty;
     } else {
-      return publication.fileArticle.isNotEmpty;
+      // Cek filePath (PERUBAHAN!)
+      return publication.filePath.isNotEmpty;
     }
   }
-  
-  // 🔥 Fungsi untuk menentukan apakah tombol unduh/baca harus ditampilkan (PERBAIKAN UTAMA #3)
-  bool get _shouldShowDocumentActions {
-      return publication.type.toLowerCase() != 'video';
-  }
 
+  // Fungsi untuk menentukan apakah tombol unduh/baca harus ditampilkan
+  bool get _shouldShowDocumentActions {
+    return publication.type.toLowerCase() != 'video';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +121,7 @@ class DetailInfoCard extends StatelessWidget {
                 children: [
                   _label(pub.type.capitalizeFirst ?? "Dokumen", true),
                   SizedBox(width: mq.size.width * 0.02),
-                  // 🔥 Menggunakan helper function yang baru
+                  // Menggunakan helper function yang sudah diupdate
                   _label(_availabilityStatusText, _isFileAvailable),
                 ],
               ),
@@ -133,14 +135,14 @@ class DetailInfoCard extends StatelessWidget {
 
               Divider(height: mq.size.height * 0.036),
 
-              // 🔥 Tampilkan daftar gabungan entitas (Penulis/Penerbit/Uploader)
+              // Tampilkan daftar gabungan entitas (Penulis/Uploader)
               ...combinedEntities,
 
               // Hanya tambahkan Divider jika ada entitas yang ditampilkan
               if (combinedEntities.isNotEmpty)
                 Divider(height: mq.size.height * 0.036),
 
-              // 🔥 Tombol Aksi Dokumen (HANYA TAMPIL JIKA BUKAN VIDEO)
+              // Tombol Aksi Dokumen (HANYA TAMPIL JIKA BUKAN VIDEO)
               if (_shouldShowDocumentActions)
                 Row(
                   children: [
@@ -150,8 +152,8 @@ class DetailInfoCard extends StatelessWidget {
                           backgroundColor: AppColor.componentColor,
                           minimumSize: Size(mq.size.width * 0.4, 45),
                         ),
-                        // 🔥 Gunakan pub.fileArticle untuk pengecekan unduh
-                        onPressed: pub.fileArticle.isNotEmpty
+                        // ✅ PERUBAHAN: Cek ketersediaan file menggunakan filePath
+                        onPressed: pub.filePath.isNotEmpty
                             ? () => controller.handleDownload()
                             : null,
                         child: Text(
@@ -167,8 +169,8 @@ class DetailInfoCard extends StatelessWidget {
                           side: BorderSide(color: AppColor.componentColor),
                           minimumSize: Size(mq.size.width * 0.4, 45),
                         ),
-                        // 🔥 Gunakan pub.fileArticle untuk pengecekan baca
-                        onPressed: pub.fileArticle.isNotEmpty
+                        // ✅ PERUBAHAN: Cek ketersediaan file menggunakan filePath
+                        onPressed: pub.filePath.isNotEmpty
                             ? () {
                                 Get.snackbar('Aksi', 'Membuka dokumen...',
                                     snackPosition: SnackPosition.TOP);
@@ -185,11 +187,10 @@ class DetailInfoCard extends StatelessWidget {
                     ),
                   ],
                 ),
-              
-              // Tambahkan jarak vertikal setelah tombol aksi (baik ditampilkan/disembunyikan)
+
               SizedBox(height: mq.size.height * 0.012),
 
-              // Aksi Metrik Dinamis (TETAP DITAMPILKAN)
+              // Aksi Metrik Dinamis
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

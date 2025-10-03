@@ -3,18 +3,25 @@ import 'package:schoolshare/core/constants/color.dart';
 import 'package:get/get.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:schoolshare/core/services/auth/auth_manager.dart';
 import 'app/routes/app_pages.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-   initializeDateFormatting('id_ID', null);
+  initializeDateFormatting('id_ID', null);
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp, // Hanya potrait atas
   ]).then((_) {
+    AuthManager().startTokenMonitoring();
     runApp(ScreenUtilInit(
       designSize: Size(375, 854),
-      builder: (context, child) => MyApp(),
+      builder: (context, child) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          AuthManager().startTokenMonitoring();
+        });
+        return MyApp();
+      },
     ));
   });
 }

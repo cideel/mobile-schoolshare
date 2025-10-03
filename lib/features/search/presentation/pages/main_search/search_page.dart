@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolshare/core/constants/color.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
+import 'package:schoolshare/features/search/presentation/controllers/discussion_controller.dart';
+import 'package:schoolshare/features/search/presentation/controllers/publication_controller.dart';
+import 'package:schoolshare/features/search/presentation/controllers/people_controller.dart';
 import 'package:schoolshare/features/search/presentation/pages/people_search/people_search.dart';
 import 'package:schoolshare/features/search/presentation/pages/publication_search/publication_search.dart';
 import 'package:schoolshare/features/search/presentation/pages/discussion/discussion_search.dart';
 import 'package:schoolshare/features/search/presentation/widgets/main_search_widgets/custom_search_bar.dart';
-import 'package:schoolshare/features/search/presentation/controllers/people_controller.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -27,15 +29,16 @@ class _SearchPageState extends State<SearchPage>
 
     _tabController = TabController(length: 3, vsync: this);
 
-    // Reload tab aktif saat tab berpindah
     _tabController.addListener(() {
-      if (_tabController.indexIsChanging)
-        return; // tunggu tab selesai berpindah
-      _reloadCurrentTab();
+      if (!_tabController.indexIsChanging) {
+        _reloadCurrentTab();
+        setState(() {}); // 🔥 supaya AppBar ikut update searchType
+      }
     });
 
-    // Reload data tab pertama saat init
-    _reloadCurrentTab();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _reloadCurrentTab();
+    });
   }
 
   @override
@@ -46,7 +49,6 @@ class _SearchPageState extends State<SearchPage>
     super.dispose();
   }
 
-  // Trigger reload saat app kembali ke foreground
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
@@ -56,11 +58,37 @@ class _SearchPageState extends State<SearchPage>
   }
 
   void _reloadCurrentTab() {
-    final query = _searchController.text;
+    final query = _searchController.text.trim();
+    switch (_tabController.index) {
+      case 0: // Orang
+        if (Get.isRegistered<PeopleController>()) {
+          Get.find<PeopleController>().fetchItems(query: query);
+        }
+        break;
+      case 1: // Publikasi
+        if (Get.isRegistered<PublicationController>()) {
+          Get.find<PublicationController>().fetchItems(query: query);
+        }
+        break;
+      case 2: // Diskusi
+        if (Get.isRegistered<DiscussionController>()) { // ⬅️ Perubahan di sini
+          Get.find<DiscussionController>().fetchItems(query: query); // ⬅️ Panggil controller diskusi
+        }
+        break;
+    }
+  }
+
+  /// 🔥 helper untuk pilih SearchType sesuai tab
+  SearchType get _currentSearchType {
     switch (_tabController.index) {
       case 0:
-        Get.find<PeopleController>().fetchItems(query: query);
-        break;
+        return SearchType.people;
+      case 1:
+        return SearchType.publication;
+      case 2:
+        return SearchType.discussion;
+      default:
+        return SearchType.people;
     }
   }
 
@@ -75,8 +103,9 @@ class _SearchPageState extends State<SearchPage>
         leading: const BackButton(color: Colors.white),
         title: CustomSearchBar(
           controller: _searchController,
-          searchType: SearchType.people, // bisa ubah saat tab berganti jika mau
+          searchType: _currentSearchType, // 🔥 sesuai tab aktif
           onSearch: (query) => _reloadCurrentTab(),
+          onClear: () => _reloadCurrentTab(),
         ),
       ),
       body: Column(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
+import 'package:get/get.dart';
+import 'package:schoolshare/app/routes/app_routes.dart';
 import 'package:schoolshare/core/constants/color.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
-import 'package:schoolshare/features/search/presentation/pages/main_search/search_page.dart';
 
 class HomeAppBar extends StatelessWidget {
   const HomeAppBar({super.key});
@@ -27,18 +27,14 @@ class HomeAppBar extends StatelessWidget {
               Expanded(
                 child: GestureDetector(
                   onTap: () {
-                    PersistentNavBarNavigator.pushNewScreen(
-                      context,
-                      screen: const SearchPage(),
-                      withNavBar: true, // IMPORTANT: This keeps the navbar
-                      pageTransitionAnimation:
-                          PageTransitionAnimation.cupertino,
-                    );
+
+                    Get.toNamed(Routes.SEARCH);
                   },
                   child: Container(
                     height: mq.size.height * 0.05,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: mq.size.width * 0.03),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: mq.size.width * 0.03,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
@@ -53,12 +49,12 @@ class HomeAppBar extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: Row(
                       children: [
-                        Icon(Icons.search_rounded,
-                            color: Colors.grey,
-                            size: mq.size.width * 0.05 // Responsive icon size
-                            ),
-                        SizedBox(
-                            width: mq.size.width * 0.02), // Responsive spacing
+                        Icon(
+                          Icons.search_rounded,
+                          color: Colors.grey,
+                          size: mq.size.width * 0.05,
+                        ),
+                        SizedBox(width: mq.size.width * 0.02),
                         Text(
                           "Cari publikasi...",
                           style: AppTextStyle.caption.copyWith(
@@ -73,18 +69,17 @@ class HomeAppBar extends StatelessWidget {
 
               SizedBox(width: mq.size.width * 0.025),
 
+              /// Bookmark button
               Container(
-                decoration: BoxDecoration(),
+                decoration: const BoxDecoration(),
                 child: IconButton(
                   icon: const Icon(Icons.bookmark_border_rounded),
                   iconSize: mq.size.width * 0.075,
                   color: Colors.white,
-                  onPressed: () => PersistentNavBarNavigator.pushNewScreen(
-                    context,
-                    screen: const SearchPage(),
-                    withNavBar: true,
-                    pageTransitionAnimation: PageTransitionAnimation.cupertino,
-                  ),
+                  onPressed: () {
+                    // nanti bisa diarahkan ke halaman bookmark
+                    Get.toNamed(Routes.BOOKMARK);
+                  },
                 ),
               ),
             ],

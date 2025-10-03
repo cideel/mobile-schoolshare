@@ -54,7 +54,8 @@ class ProfilePage extends StatelessWidget {
           body: TabBarView(
             children: [
               ProfileTab(),
-              ContentListPage(),
+              // ContentListPage(),
+              StatsTab(),
               StatsTab(),
             ],
           ),

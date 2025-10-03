@@ -113,7 +113,7 @@ class DetailContentController extends GetxController {
   // 🔥 LOGIC DOWNLOAD (Diperbarui untuk menggunakan .copyWith)
   Future<void> handleDownload() async {
     final pub = publication.value;
-    if (pub == null || pub.fileArticle.isEmpty) {
+    if (pub == null || pub.filePath.isEmpty) {
       Get.snackbar('Informasi', 'Dokumen tidak tersedia untuk diunduh.',
           snackPosition: SnackPosition.BOTTOM);
       return;

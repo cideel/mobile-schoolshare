@@ -1,6 +1,6 @@
 class ApiUrls {
-  static const String baseUrl = "http://72.60.76.158/api";
-  static const String storageUrl = "http://72.60.76.158/storage";
+  static const String baseUrl = "https://schoolshare.id/api";
+  static const String storageUrl = "https://schoolshare.id/storage";
   // Authentication APIs
   static const String login = "$baseUrl/login";
   static const String register = "$baseUrl/register";
@@ -34,4 +34,12 @@ class ApiUrls {
   static const String userSearch = "$baseUrl/users/search";
   static const String publicationSearch = "$baseUrl/content/search";
   static const String discussionSearch = "$baseUrl/forums/search";
+
+  // Discussion Forum APIs
+  static String forumDetail(int forumId) => "$baseUrl/forums/$forumId";
+  static String storeComment(int forumId) =>
+      "$baseUrl/forums/$forumId/comments";
+  static const String createForum = "$baseUrl/forums";
+  static const String listForums = "$baseUrl/forums";
+  static const String listCategories = "$baseUrl/categories";
 }

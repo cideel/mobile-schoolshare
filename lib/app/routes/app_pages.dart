@@ -5,7 +5,9 @@ import 'package:schoolshare/features/detail_content/presentation/pages/detail_co
 import 'package:schoolshare/features/own_profile/bindings/header_profile_binding.dart';
 import 'package:schoolshare/features/own_profile/bindings/profile_tab_profile_binding.dart';
 import 'package:schoolshare/features/own_profile/bindings/statistic_tab_binding.dart';
+import 'package:schoolshare/features/search/presentation/bindings/discussion_binding.dart';
 import 'package:schoolshare/features/search/presentation/bindings/people_binding.dart';
+import 'package:schoolshare/features/search/presentation/bindings/publication_binding.dart';
 import 'package:schoolshare/features/search/presentation/pages/main_search/search_page.dart';
 import '../../features/auth/bindings/auth_binding.dart';
 import '../../features/home/bindings/home_binding.dart';
@@ -70,7 +72,11 @@ class AppPages {
     GetPage(
       name: Routes.SEARCH,
       page: () => const SearchPage(),
-      binding: PeopleBinding(),
+      bindings: [
+        PublicationBinding(),
+        PeopleBinding(),
+        DiscussionBinding(),
+      ],
     ),
   ];
 }

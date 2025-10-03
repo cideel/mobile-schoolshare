@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:schoolshare/core/constants/color.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
+import 'package:schoolshare/core/services/api_urls.dart';
 import '../../../../../data/models/discussion_item.dart';
 
 class DiscussionCard extends StatelessWidget {
@@ -17,7 +18,7 @@ class DiscussionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
-    
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -41,7 +42,7 @@ class DiscussionCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                discussion.topic,
+                discussion.category.name,
                 style: AppTextStyle.caption.copyWith(
                   color: AppColor.componentColor,
                   fontWeight: FontWeight.w600,
@@ -63,7 +64,7 @@ class DiscussionCard extends StatelessWidget {
 
             // Description
             Text(
-              discussion.description,
+              discussion.body,
               style: AppTextStyle.bodyText.copyWith(
                 fontSize: 13.sp,
                 color: Colors.grey[600],
@@ -80,7 +81,7 @@ class DiscussionCard extends StatelessWidget {
                 // Author Info
                 CircleAvatar(
                   radius: mq.size.width * 0.025,
-                  backgroundImage: AssetImage(discussion.authorPhoto),
+                  backgroundImage: _getImageProvider(discussion.author.profile),
                 ),
                 SizedBox(width: mq.size.width * 0.02),
                 Expanded(
@@ -88,8 +89,9 @@ class DiscussionCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        discussion.author,
-                        style: AppTextStyle.authorName.copyWith(fontSize: 12.sp),
+                        discussion.author.name,
+                        style:
+                            AppTextStyle.authorName.copyWith(fontSize: 12.sp),
                       ),
                       Text(
                         _getTimeAgo(discussion.createdAt),
@@ -141,5 +143,17 @@ class DiscussionCard extends StatelessWidget {
     } else {
       return 'Baru saja';
     }
+  }
+
+  ImageProvider _getImageProvider(String? photo) {
+    if (photo != null && photo.isNotEmpty) {
+      if (photo.startsWith('http://') || photo.startsWith('https://')) {
+        return NetworkImage(photo);
+      } else {
+        final separator = photo.startsWith('/') ? '' : '/';
+        return NetworkImage("${ApiUrls.storageUrl}$separator$photo");
+      }
+    }
+    return const AssetImage('assets/images/example-profile.jpg');
   }
 }

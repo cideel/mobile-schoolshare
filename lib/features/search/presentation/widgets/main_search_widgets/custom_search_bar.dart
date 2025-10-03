@@ -2,7 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
+import 'package:schoolshare/features/search/presentation/controllers/discussion_controller.dart';
 import 'package:schoolshare/features/search/presentation/controllers/people_controller.dart';
+import 'package:schoolshare/features/search/presentation/controllers/publication_controller.dart';
 // nanti tambahin juga publication_controller & discussion_controller
 
 enum SearchType { people, publication, discussion }
@@ -38,10 +40,13 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
           Get.find<PeopleController>().fetchItems(query: value);
           break;
         case SearchType.publication:
-          // Get.find<PublicationController>().fetchPublications(query: value);
+          Get.find<PublicationController>().fetchItems(query: value);
           break;
         case SearchType.discussion:
-          // Get.find<DiscussionController>().fetchDiscussions(query: value);
+          if (Get.isRegistered<DiscussionController>()) {
+            // ⬅️ Perubahan di sini
+            Get.find<DiscussionController>().fetchItems(query: value);
+          }
           break;
       }
       // trigger callback tambahan jika ada

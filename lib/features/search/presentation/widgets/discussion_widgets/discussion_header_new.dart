@@ -15,7 +15,7 @@ class DiscussionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
-    
+
     return Container(
       padding: EdgeInsets.all(mq.size.width * 0.04),
       decoration: BoxDecoration(
@@ -37,7 +37,7 @@ class DiscussionHeader extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
-              discussion.topic,
+              discussion.title,
               style: AppTextStyle.caption.copyWith(
                 color: AppColor.componentColor,
                 fontWeight: FontWeight.w600,
@@ -65,14 +65,15 @@ class DiscussionHeader extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 16,
-                backgroundImage: AssetImage(discussion.authorPhoto),
+                backgroundImage: AssetImage(discussion.author.profile ??
+                    'assets/images/example-profile.jpg'),
               ),
               SizedBox(width: mq.size.width * 0.03),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    discussion.author,
+                    discussion.author.name,
                     style: AppTextStyle.authorName.copyWith(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w600,
@@ -94,7 +95,7 @@ class DiscussionHeader extends StatelessWidget {
 
           // Content
           Text(
-            discussion.description,
+            discussion.body,
             style: AppTextStyle.bodyText.copyWith(
               fontSize: 14.sp,
               height: 1.4,
@@ -127,7 +128,11 @@ class DiscussionHeader extends StatelessWidget {
     );
   }
 
-  String _formatTimeAgo(DateTime dateTime) {
+  String _formatTimeAgo(DateTime? dateTime) {
+    if (dateTime == null) {
+      return 'Waktu tidak diketahui';
+    }
+    
     final now = DateTime.now();
     final difference = now.difference(dateTime);
 
