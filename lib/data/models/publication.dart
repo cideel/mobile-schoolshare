@@ -1,4 +1,4 @@
-// lib/data/models/publication.dart
+// lib/data/models/publication.dart (FINAL VERSION)
 
 import 'dart:convert';
 import 'package:intl/intl.dart';
@@ -24,17 +24,22 @@ class Publication {
   final String title;
   final String description;
   final String type;
-  final String fileArticle;
+
+  // ✅ PERUBAHAN NAMA FIELD: fileArticle diubah menjadi filePath
+  final String filePath;
   final DateTime publishedDate;
-  final String videoUrl; 
+  final String videoUrl;
 
-  // 🔥 DIUBAH MENJADI NON-FINAL SESUAI PERMINTAAN
-  int readCount; // total_readings
-  int downloadCount; // total_downloaded
-  int shareCount; // total_shared
-  int likeCount; // total_recommendations
+  // ✅ PENAMBAHAN FIELD: Metadata untuk Book, Report, dll.
+  final Map<String, dynamic> metadata;
 
-  // Status personal (Non-final sesuai permintaan)
+  // Status hitungan
+  int readCount;
+  int downloadCount;
+  int shareCount;
+  int likeCount;
+
+  // Status personal
   bool isRecommended;
   bool isBookmarked;
 
@@ -43,7 +48,8 @@ class Publication {
   final String uploaderProfileUrl;
 
   final List<AuthorModel> authors;
-  final List<AuthorModel> publishers;
+
+  // ❌ PENGHAPUSAN FIELD: publishers sudah dihapus dari API dan Model
 
   Publication({
     required this.id,
@@ -54,16 +60,19 @@ class Publication {
     required this.likeCount,
     required this.downloadCount,
     required this.shareCount,
-    required this.fileArticle,
+
+    // ✅ PERUBAHAN NAMA FIELD DI CONSTRUCTOR
+    required this.filePath,
     required this.publishedDate,
     required this.videoUrl,
+    required this.metadata, // ✅ PENAMBAHAN METADATA
     required this.isRecommended,
     required this.isBookmarked,
     required this.uploaderName,
     required this.uploaderInstitutionName,
     required this.uploaderProfileUrl,
     required this.authors,
-    required this.publishers,
+    // publishers dihapus
   });
 
   Publication copyWith({
@@ -80,9 +89,12 @@ class Publication {
       title: title,
       description: description,
       type: type,
-      fileArticle: fileArticle,
-      videoUrl: videoUrl ?? this.videoUrl, 
+
+      filePath: filePath, // Menggunakan filePath lama
+      videoUrl: videoUrl ?? this.videoUrl,
       publishedDate: publishedDate,
+      metadata: metadata,
+
       readCount: readCount ?? this.readCount,
       likeCount: likeCount ?? this.likeCount,
       downloadCount: downloadCount ?? this.downloadCount,
@@ -93,25 +105,25 @@ class Publication {
       uploaderInstitutionName: uploaderInstitutionName,
       uploaderProfileUrl: uploaderProfileUrl,
       authors: authors,
-      publishers: publishers,
     );
   }
 
   factory Publication.fromJson(Map<String, dynamic> json) {
     final user = json['user'] as Map<String, dynamic>?;
+    final institusi = user?['institusi'] as Map<String, dynamic>?;
 
     final List<AuthorModel> authorList = (json['authors'] as List? ?? [])
         .map((e) => AuthorModel.fromJson(e as Map<String, dynamic>))
         .toList();
 
-    final List<AuthorModel> publisherList =
-        (json['publisher_book_data'] as List? ?? [])
-            .map((e) => AuthorModel.fromJson(e as Map<String, dynamic>))
-            .toList();
-
     DateTime publishedDate =
         DateTime.tryParse(json['created_at'] as String? ?? '') ??
             DateTime.now();
+
+    // Pastikan metadata adalah Map
+    final metadataJson = json['metadata'];
+    final Map<String, dynamic> metadataMap =
+        (metadataJson is Map) ? metadataJson.cast<String, dynamic>() : {};
 
     return Publication(
       id: json['id'] as int? ?? 0,
@@ -121,18 +133,25 @@ class Publication {
       readCount: json['total_readings'] as int? ?? 0,
       likeCount: json['total_recommendations'] as int? ?? 0,
       downloadCount: json['total_downloaded'] as int? ?? 0,
-      fileArticle: json['file_article'] as String? ?? '',
-      videoUrl: json['video'] as String? ?? '',
       shareCount: json['total_shared'] as int? ?? 0,
       publishedDate: publishedDate,
+
+      // ✅ MENGAMBIL DARI KUNCI 'file_path'
+      filePath: json['file_path'] as String? ?? '',
+
+      // ✅ MENGAMBIL DARI KUNCI 'video_url'
+      videoUrl: json['video_url'] as String? ?? '',
+
+      // ✅ MENGAMBIL DARI KUNCI 'metadata'
+      metadata: metadataMap,
+
       isRecommended: json['is_recommended_by_user'] as bool? ?? false,
       isBookmarked: json['is_bookmarked_by_user'] as bool? ?? false,
       uploaderName: user?['name'] as String? ?? 'Anonim',
       uploaderInstitutionName:
-          user?['institusi']?['name'] as String? ?? 'Institusi Tidak Diketahui',
+          institusi?['name'] as String? ?? 'Institusi Tidak Diketahui',
       uploaderProfileUrl: user?['profile'] as String? ?? '',
       authors: authorList,
-      publishers: publisherList,
     );
   }
 
