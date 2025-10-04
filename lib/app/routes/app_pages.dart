@@ -1,10 +1,13 @@
 import 'package:get/get.dart';
 import 'package:schoolshare/features/bookmark/bindings/bookmark_binding.dart';
+import 'package:schoolshare/features/bookmark/pages/bookmark_list_page_clean.dart';
 import 'package:schoolshare/features/detail_content/presentation/bindings/content_detail_binding.dart';
 import 'package:schoolshare/features/detail_content/presentation/pages/detail_content.dart';
 import 'package:schoolshare/features/own_profile/bindings/header_profile_binding.dart';
 import 'package:schoolshare/features/own_profile/bindings/profile_tab_profile_binding.dart';
 import 'package:schoolshare/features/own_profile/bindings/statistic_tab_binding.dart';
+import 'package:schoolshare/features/own_profile/update_profile/presentation/pages/update_profile_page.dart';
+import 'package:schoolshare/features/own_profile/update_profile/presentation/bindings/update_profile_binding.dart';
 import 'package:schoolshare/features/search/presentation/bindings/discussion_binding.dart';
 import 'package:schoolshare/features/search/presentation/bindings/people_binding.dart';
 import 'package:schoolshare/features/search/presentation/bindings/publication_binding.dart';
@@ -64,7 +67,7 @@ class AppPages {
     ),
     GetPage(
       name: Routes.BOOKMARK,
-      page: () => NavBarScreen(),
+      page: () => const BookmarkListPage(),
       bindings: [
         BookmarkBinding(),
       ],
@@ -77,6 +80,11 @@ class AppPages {
         PeopleBinding(),
         DiscussionBinding(),
       ],
+    ),
+    GetPage(
+      name: Routes.UPDATE_PROFILE,
+      page: () => const UpdateProfilePage(),
+      binding: UpdateProfileBinding(),
     ),
   ];
 }

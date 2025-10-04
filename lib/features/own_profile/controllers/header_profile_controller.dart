@@ -58,7 +58,13 @@ class HeaderProfileController extends GetxController {
         // 2. Refresh data profil untuk menampilkan gambar baru
         // Kita paksa loading untuk memastikan tampilan gambar diperbarui
         isLoading.value = true;
+        
+        // Tunggu sebentar agar server selesai proses file upload
+        await Future.delayed(const Duration(seconds: 2));
+        
         await fetchUserProfile();
+        // Force UI rebuild
+        update();
 
         // Notifikasi sukses
         Get.snackbar('Berhasil', 'Foto profil berhasil diperbarui.',

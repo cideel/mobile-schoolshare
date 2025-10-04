@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:schoolshare/core/constants/color.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
 import '../../widgets/content_submit/content_type_bottom_sheet.dart';
 import '../../widgets/content_submit/author_bottom_sheet.dart';
 import '../../widgets/content_submit/form_components.dart';
 import '../../../data/datasources/content_constants.dart';
+import '../../../data/models/content_form_config.dart';
 import '../../providers/content_utils_provider.dart';
+import '../../controllers/content_submission_controller.dart';
 
 class SubmitContentPage extends StatefulWidget {
   const SubmitContentPage({super.key});
@@ -20,15 +23,26 @@ class _SubmitContentPageState extends State<SubmitContentPage> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
+  final _videoUrlController = TextEditingController();
   
   String? _selectedContentType;
   List<String> _selectedAuthors = [];
   List<String> _uploadedFiles = [];
 
+  // Get controller
+  late ContentSubmissionController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = Get.put(ContentSubmissionController());
+  }
+
   @override
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+    _videoUrlController.dispose();
     super.dispose();
   }
 
@@ -52,14 +66,30 @@ class _SubmitContentPageState extends State<SubmitContentPage> {
               SizedBox(height: mq.size.height * 0.03),
               _buildContentTypeSection(mq),
               SizedBox(height: mq.size.height * 0.03),
-              _buildAuthorSection(mq),
-              SizedBox(height: mq.size.height * 0.03),
-              _buildFileUploadSection(mq),
+              
+              // Dynamic sections based on content type
+              if (_selectedContentType != null) ...[
+                if (ContentFormConfig.requiresVideoUrl(_selectedContentType!)) ...[
+                  _buildVideoUrlSection(mq),
+                  SizedBox(height: mq.size.height * 0.03),
+                ],
+                
+                _buildAuthorSection(mq),
+                SizedBox(height: mq.size.height * 0.03),
+                
+                if (ContentFormConfig.allowsFileUpload(_selectedContentType!)) ...[
+                  _buildFileUploadSection(mq),
+                  SizedBox(height: mq.size.height * 0.03),
+                ],
+                
+                if (ContentFormConfig.hasMetadataFields(_selectedContentType!)) ...[
+                  _buildMetadataSection(mq),
+                  SizedBox(height: mq.size.height * 0.03),
+                ],
+              ],
+              
               SizedBox(height: mq.size.height * 0.04),
-              FormComponents.buildSubmitButton(
-                onPressed: _submitContent,
-                mediaQuery: mq,
-              ),
+              _buildSubmitButton(mq),
             ],
           ),
         ),
@@ -249,7 +279,106 @@ class _SubmitContentPageState extends State<SubmitContentPage> {
     );
   }
 
-  Widget _buildFileUploadSection(MediaQueryData mq) {
+  Widget _buildVideoUrlSection(MediaQueryData mq) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        FormComponents.buildSectionTitle('URL Video'),
+        SizedBox(height: mq.size.height * 0.012),
+        FormComponents.buildTextField(
+          controller: _videoUrlController,
+          hintText: 'Masukkan URL video (YouTube, Vimeo, dll)...',
+          validator: (value) {
+            if (_selectedContentType == 'Video' && (value == null || value.isEmpty)) {
+              return 'URL video wajib diisi untuk konten video';
+            }
+            if (value != null && value.isNotEmpty && !_isValidUrl(value)) {
+              return 'Format URL tidak valid';
+            }
+            return null;
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMetadataSection(MediaQueryData mq) {
+    if (_selectedContentType == null) return const SizedBox.shrink();
+    
+    final metadataFields = ContentFormConfig.getMetadataFields(_selectedContentType!);
+    if (metadataFields.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        FormComponents.buildSectionTitle('Informasi Tambahan'),
+        SizedBox(height: mq.size.height * 0.012),
+        ...metadataFields.entries.map((entry) {
+          return Padding(
+            padding: EdgeInsets.only(bottom: mq.size.height * 0.02),
+            child: _buildMetadataField(entry.key, entry.value),
+          );
+        }).toList(),
+      ],
+    );
+  }
+
+  Widget _buildMetadataField(String key, Map<String, dynamic> fieldConfig) {
+    final type = fieldConfig['type'] as String;
+    final label = fieldConfig['label'] as String;
+    final required = fieldConfig['required'] as bool? ?? false;
+
+    switch (type) {
+      case 'text':
+        return FormComponents.buildTextField(
+          hintText: 'Masukkan $label...',
+          validator: required ? (value) => value?.isEmpty == true ? '$label wajib diisi' : null : null,
+          onChanged: (value) => _controller.updateMetadata(key, value),
+        );
+      case 'textarea':
+        return FormComponents.buildTextField(
+          hintText: 'Masukkan $label...',
+          maxLines: 3,
+          validator: required ? (value) => value?.isEmpty == true ? '$label wajib diisi' : null : null,
+          onChanged: (value) => _controller.updateMetadata(key, value),
+        );
+      case 'number':
+        return FormComponents.buildTextField(
+          hintText: 'Masukkan $label...',
+          keyboardType: TextInputType.number,
+          validator: required ? (value) => value?.isEmpty == true ? '$label wajib diisi' : null : null,
+          onChanged: (value) => _controller.updateMetadata(key, int.tryParse(value ?? '') ?? 0),
+        );
+      default:
+        return FormComponents.buildTextField(
+          hintText: 'Masukkan $label...',
+          validator: required ? (value) => value?.isEmpty == true ? '$label wajib diisi' : null : null,
+          onChanged: (value) => _controller.updateMetadata(key, value),
+        );
+    }
+  }
+
+  Widget _buildSubmitButton(MediaQueryData mq) {
+    return GetX<ContentSubmissionController>(
+      builder: (controller) {
+        return FormComponents.buildSubmitButton(
+          onPressed: controller.isSubmitting ? null : _submitContent,
+          mediaQuery: mq,
+          isLoading: controller.isSubmitting,
+        );
+      },
+    );
+  }
+
+  // Helper method
+  bool _isValidUrl(String url) {
+    try {
+      final uri = Uri.parse(url);
+      return uri.hasScheme && (uri.scheme == 'http' || uri.scheme == 'https');
+    } catch (e) {
+      return false;
+    }
+  }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

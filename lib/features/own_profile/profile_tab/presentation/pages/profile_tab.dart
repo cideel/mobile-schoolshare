@@ -7,16 +7,14 @@ import 'package:get/get.dart';
 import 'package:schoolshare/features/own_profile/controllers/profile_tab_profile_controller.dart';
 import 'package:schoolshare/data/models/institution_model.dart';
 import 'package:schoolshare/core/services/api_urls.dart';
+import 'package:schoolshare/app/routes/app_routes.dart';
 
 class ProfileTab extends StatelessWidget {
-  final ProfileTabProfileController controller =
-      Get.find<ProfileTabProfileController>();
-
   ProfileTab({super.key});
 
   @override
-  Widget build(BuildContext trimContext) {
-    final mq = MediaQuery.of(trimContext);
+  Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context);
     final horizontalPadding = mq.size.width * 0.05;
 
     return Scaffold(
@@ -25,47 +23,57 @@ class ProfileTab extends StatelessWidget {
         padding:
             EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 20),
 
-        // 🔥 Menggunakan OBX untuk menangani State Loading/Error/Success
-        child: controller.obx(
-          (user) {
-            // Sukses: Data user tersedia (user adalah UserModel)
+        // 🔥 Menggunakan Obx untuk reactive UI yang lebih simple
+        child: Obx(() {
+          final controller = Get.find<ProfileTabProfileController>();
+          
+          // Handle loading state
+          if (controller.status.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-            // Ambil data Afiliasi dari Rx variable di Controller
-            final Institution? inst = controller.institution.value;
-            final String posName = controller.userPositionName.value;
+          // Handle error state
+          if (controller.status.isError) {
+            return Center(
+              child: Text('Gagal memuat data profil: ${controller.status.errorMessage}'),
+            );
+          }
 
-            // Buat list widget secara kondisional
-            final List<Widget> affiliationWidgets = [];
+          // Success state - Data user tersedia
+          final user = controller.status.isSuccess ? controller.state : null;
+          if (user == null) {
+            return const Center(child: Text('Data user tidak tersedia'));
+          }
 
-            if (inst != null) {
-              affiliationWidgets.addAll([
+          // Ambil data afiliasi
+          final Institution? inst = controller.institution.value;
+          final String posName = controller.userPositionName.value;
+
+          return ListView(
+            children: [
+              // Edit Profile Button
+              const SizedBox(height: 16),
+              
+              // Afiliasi section
+              if (inst != null) ...[
                 Text(
                   "Afiliasi",
-                  style:
-                      TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
                 _buildAffiliationRow(inst, posName),
                 const SizedBox(height: 16),
                 const Divider(color: Colors.grey, thickness: 0.5),
-              ]);
-            }
-
-            return ListView(
-              children: [
-                ...affiliationWidgets, // Kosong jika inst == null
               ],
-            );
-          },
-          // onLoading: Tampilan ketika data sedang diambil
-          onLoading: const Center(child: CircularProgressIndicator()),
-          // onError: Tampilan ketika terjadi error
-          onError: (error) =>
-              Center(child: Text('Gagal memuat data profil: $error')),
-        ),
+            ],
+          );
+        }),
       ),
     );
   }
+
+  // 🔥 Widget untuk Edit Profile Button
+  
 
   // 🔥 Widget untuk menampilkan baris Institusi dan Posisi secara Dinamis
   Widget _buildAffiliationRow(Institution inst, String positionName) {
@@ -75,7 +83,7 @@ class ProfileTab extends StatelessWidget {
     // Tentukan URL/path yang akan digunakan
     final String imageUrl = useNetworkImage
         ? ApiUrls.storageUrl +
-            (logoPath!.startsWith('/') ? logoPath : '/$logoPath')
+            (logoPath.startsWith('/') ? logoPath : '/$logoPath')
         : 'assets/images/example-logo-univ.png'; // Fallback lokal
 
     return Row(

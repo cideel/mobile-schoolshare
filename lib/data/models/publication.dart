@@ -156,6 +156,6 @@ class Publication {
   }
 
   String get formattedPublishedDate {
-    return DateFormat('d MMMM yyyy', 'id_ID').format(publishedDate);
+    return DateFormat('d MMMM yyyy').format(publishedDate);
   }
 }

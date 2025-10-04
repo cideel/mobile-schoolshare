@@ -97,4 +97,68 @@ class HeaderProfileService implements HeaderProfileRepository {
       rethrow;
     }
   }
+
+  Future<void> updateProfile({
+    String? name,
+    String? email,
+    String? phone,
+    String? profileImagePath,
+  }) async {
+    final String? token = await StorageUtils.getToken();
+
+    if (token == null) {
+      throw Exception(
+          'Token autentikasi tidak ditemukan. Silakan login kembali.');
+    }
+
+    final url = Uri.parse(ApiUrls.updateProfile);
+
+    // Menggunakan MultipartRequest untuk support file upload dan data
+    final request = http.MultipartRequest('POST', url)
+      ..headers['Authorization'] = 'Bearer $token';
+
+    // Tambahkan data text fields
+    if (name != null && name.isNotEmpty) {
+      request.fields['name'] = name;
+    }
+    if (email != null && email.isNotEmpty) {
+      request.fields['email'] = email;
+    }
+    if (phone != null && phone.isNotEmpty) {
+      request.fields['phone'] = phone;
+    }
+
+    // Tambahkan file jika ada
+    if (profileImagePath != null && profileImagePath.isNotEmpty) {
+      request.files.add(await http.MultipartFile.fromPath('profile', profileImagePath));
+    }
+
+    debugPrint('Updating profile to: $url');
+    debugPrint('Fields: ${request.fields}');
+    debugPrint('Has file: ${request.files.isNotEmpty}');
+
+    try {
+      final streamedResponse = await _client.send(request);
+      final response = await http.Response.fromStream(streamedResponse);
+      final responseData = json.decode(response.body);
+
+      debugPrint('Update profile response status: ${response.statusCode}');
+      debugPrint('Update profile response body: ${response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Sukses. Notifikasi akan ditampilkan di Controller.
+      } else if (response.statusCode == 401) {
+        throw Exception('Sesi habis. Silakan login kembali.');
+      } else {
+        throw Exception(responseData['message'] ??
+            'Gagal memperbarui profil: Status ${response.statusCode}');
+      }
+    } on http.ClientException {
+      throw Exception(
+          'Gagal terhubung ke server. Periksa koneksi atau IP server (${ApiUrls.baseUrl}).');
+    } catch (e) {
+      debugPrint('Error in updateProfile: $e');
+      rethrow;
+    }
+  }
 }

@@ -44,9 +44,10 @@ class ProfileHeader extends StatelessWidget {
       final profileImageUrl = userData['profile'];
 
       // Menggabungkan URL dasar penyimpanan dengan jalur file profil
+      // Tambahkan cache busting untuk memaksa reload gambar terbaru
       final fullProfileUrl =
           profileImageUrl != null && profileImageUrl.isNotEmpty
-              ? '${ApiUrls.storageUrl}/$profileImageUrl'
+              ? '${ApiUrls.storageUrl}/$profileImageUrl?v=${DateTime.now().millisecondsSinceEpoch}'
               : null;
 
       return Padding(

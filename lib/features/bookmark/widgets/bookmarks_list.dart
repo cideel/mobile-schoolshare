@@ -16,7 +16,7 @@
 //     final mq = MediaQuery.of(context);
 
 //     return RefreshIndicator(
-//       onRefresh: () async => await controller.refreshBookmarks(),
+//       onRefresh: () async => await controller.fetchBookmarks(),
 //       color: AppColor.componentColor,
 //       child: ListView.builder(
 //         padding: EdgeInsets.only(

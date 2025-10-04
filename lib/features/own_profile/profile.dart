@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:schoolshare/core/constants/color.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
+import 'package:schoolshare/app/routes/app_routes.dart';
 import 'package:schoolshare/features/own_profile/content_tab/presentation/pages/content_list/content_list_page.dart';
 import 'profile_tab/presentation/pages/profile_tab.dart';
 import 'statistic_tab/presentation/pages/stats_tab.dart';
@@ -8,6 +10,35 @@ import 'widgets/profile_header.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Konfirmasi Logout'),
+          content: const Text('Apakah Anda yakin ingin keluar dari aplikasi?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Batal'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // TODO: Implement logout logic here
+                // Get.offAllNamed(Routes.LOGIN);
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.red,
+              ),
+              child: const Text('Logout'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +57,41 @@ class ProfilePage extends StatelessWidget {
                 Padding(
                   padding:
                       EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
-                  child: const Icon(Icons.settings, color: Colors.black),
+                  child: PopupMenuButton<String>(
+                    icon: const Icon(Icons.settings, color: Colors.black),
+                    onSelected: (String value) {
+                      if (value == 'edit_profile') {
+                        Get.toNamed(Routes.UPDATE_PROFILE);
+                      } else if (value == 'logout') {
+                        _showLogoutDialog(context);
+                      }
+                    },
+                    itemBuilder: (BuildContext context) => [
+                      const PopupMenuItem<String>(
+                        value: 'edit_profile',
+                        child: Row(
+                          children: [
+                            Icon(Icons.edit, color: Colors.black87),
+                            SizedBox(width: 12),
+                            Text('Ubah Profil'),
+                          ],
+                        ),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: 'logout',
+                        child: Row(
+                          children: [
+                            Icon(Icons.logout, color: Colors.red),
+                            SizedBox(width: 12),
+                            Text(
+                              'Logout',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
               flexibleSpace: FlexibleSpaceBar(
@@ -54,10 +119,8 @@ class ProfilePage extends StatelessWidget {
           body: TabBarView(
             children: [
               ProfileTab(),
-              // ContentListPage(),
-              StatsTab(),
-              StatsTab(),
-            ],
+              ContentListPage(),
+              StatsTab(),],
           ),
         ),
       ),

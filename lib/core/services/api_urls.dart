@@ -42,4 +42,9 @@ class ApiUrls {
   static const String createForum = "$baseUrl/forums";
   static const String listForums = "$baseUrl/forums";
   static const String listCategories = "$baseUrl/categories";
+
+  // Content Management APIs
+  static const String createContent = "$baseUrl/content";
+  static String updateContent(String contentId) => "$baseUrl/content/$contentId";
+  static String deleteContent(String contentId) => "$baseUrl/content/$contentId";
 }

@@ -43,4 +43,34 @@ class BookmarkService {
       rethrow;
     }
   }
+
+  /// Toggle bookmark status untuk content tertentu.
+  Future<void> toggleBookmark(String contentId) async {
+    try {
+      final String? token = await StorageUtils.getToken();
+
+      if (token == null) {
+        throw Exception("Token autentikasi tidak ditemukan.");
+      }
+
+      final response = await _httpClient.post(
+        Uri.parse(ApiUrls.toggleBookmark),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode({
+          'content_id': contentId,
+        }),
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        final errorBody = json.decode(response.body);
+        final errorMessage = errorBody['message'] ?? 'Gagal toggle bookmark.';
+        throw Exception("Status code ${response.statusCode}: $errorMessage");
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolshare/data/models/bookmark_model.dart';
 import 'package:schoolshare/features/bookmark/domain/repositories/bookmark_repository.dart';
@@ -33,17 +34,39 @@ class BookmarkController extends GetxController {
     }
   }
 
-  /// Logika untuk menghapus/toggle bookmark (contoh)
+  /// Logika untuk menghapus/toggle bookmark
   Future<void> toggleBookmark(int contentId) async {
-    // Implementasi logika API toggleBookmark di sini
-    // Setelah sukses, panggil fetchBookmarks() untuk me-refresh list
-    // Misalnya:
-    // try {
-    //   await _service.toggleBookmark(contentId);
-    //   fetchBookmarks();
-    // } catch (e) {
-    //   Get.snackbar('Error', 'Gagal mengubah status bookmark');
-    // }
+    try {
+      // Konversi contentId ke String
+      final contentIdStr = contentId.toString();
+      
+      // Panggil repository untuk toggle bookmark
+      await _repository.toggleBookmark(contentIdStr);
+      
+      // Refresh daftar bookmark setelah toggle
+      await fetchBookmarks();
+      
+      // Tampilkan pesan sukses
+      Get.snackbar(
+        'Berhasil',
+        'Bookmark berhasil dihapus',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Get.theme.colorScheme.primary,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2),
+      );
+    } catch (e) {
+      // Tampilkan pesan error
+      print("Error toggling bookmark: $e");
+      Get.snackbar(
+        'Error',
+        'Gagal menghapus bookmark: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Get.theme.colorScheme.error,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2),
+      );
+    }
   }
 
   /// Aksi saat tombol coba lagi (Retry) di error state ditekan.

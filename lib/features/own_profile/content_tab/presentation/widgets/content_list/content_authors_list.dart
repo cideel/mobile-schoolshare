@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:schoolshare/core/constants/color.dart';
 import 'package:schoolshare/core/constants/text_styles.dart';
+import 'package:schoolshare/core/services/api_urls.dart';
+import 'package:schoolshare/features/own_profile/controllers/header_profile_controller.dart';
 
 class ContentAuthorsList extends StatelessWidget {
   final List<String> authors;
@@ -59,15 +62,8 @@ class ContentAuthorsList extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.max,
           children: [
-            CircleAvatar(
-              radius: mediaQuery.size.width * 0.035, 
-              backgroundColor: AppColor.componentColor,
-              child: Icon(
-                Icons.person,
-                size: mediaQuery.size.width * 0.04,
-                color: Colors.white,
-              ),
-            ),
+            // Profile avatar dengan foto profil asli jika tersedia
+            _buildAuthorAvatar(author),
             SizedBox(width: mediaQuery.size.width * 0.02), 
             Expanded(
               child: Text(
@@ -85,5 +81,47 @@ class ContentAuthorsList extends StatelessWidget {
         ),
       );
     });
+  }
+
+  Widget _buildAuthorAvatar(String authorName) {
+    try {
+      // Coba ambil header profile controller untuk mendapatkan data profil user
+      final headerController = Get.find<HeaderProfileController>();
+      final userData = headerController.userProfile.value;
+      final currentUserName = userData['name'] ?? '';
+      final profileImageUrl = userData['profile'] ?? '';
+      
+      // Jika author adalah user yang sedang login dan punya foto profil
+      if (authorName == currentUserName && profileImageUrl.isNotEmpty) {
+        final fullImageUrl = profileImageUrl.startsWith('http')
+            ? profileImageUrl
+            : '${ApiUrls.storageUrl}/$profileImageUrl?v=${DateTime.now().millisecondsSinceEpoch}';
+            
+        return CircleAvatar(
+          radius: mediaQuery.size.width * 0.035,
+          backgroundColor: AppColor.componentColor,
+          backgroundImage: NetworkImage(fullImageUrl),
+          onBackgroundImageError: (exception, stackTrace) {
+            // Fallback ke icon default jika gambar gagal load
+            print('Error loading profile image: $exception');
+          },
+          child: null, // Tidak ada child jika backgroundImage tersedia
+        );
+      }
+    } catch (e) {
+      // Header controller tidak tersedia, gunakan avatar default
+      print('Header controller not available: $e');
+    }
+    
+    // Default avatar untuk author lain atau jika tidak ada foto profil
+    return CircleAvatar(
+      radius: mediaQuery.size.width * 0.035, 
+      backgroundColor: AppColor.componentColor,
+      child: Icon(
+        Icons.person,
+        size: mediaQuery.size.width * 0.04,
+        color: Colors.white,
+      ),
+    );
   }
 }

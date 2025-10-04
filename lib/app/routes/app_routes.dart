@@ -4,6 +4,7 @@ abstract class Routes {
   static const ADD_INSTITUTION = '/add-institution';
   static const HOME = '/home';
   static const PROFILE = '/profile';
+  static const UPDATE_PROFILE = '/update-profile';
   static const SPLASH = '/splash';
   static const DETAIL_CONTENT = '/detail-content';
   static const BOOKMARK = '/bookmark';
